@@ -1,0 +1,70 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; vertical-align: baseline; }
+
+body, html { height: 100%; }
+
+img, fieldset, a img { border: none; }
+
+input[type="text"], input[type="email"], input[type="tel"], textarea { -webkit-appearance: none; }
+
+input[type="submit"], button { cursor: pointer; }
+input[type="submit"]::-moz-focus-inner, button::-moz-focus-inner { padding: 0; border: 0; }
+
+textarea { overflow: auto; }
+
+input, button { margin: 0; padding: 0; border: 0; }
+
+div, input, textarea, select, button, h1, h2, h3, h4, h5, h6, a, span, a:focus { outline: none; }
+
+ul, ol { list-style-type: none; }
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) { * { -webkit-text-size-adjust: none; } }
+table { border-spacing: 0; border-collapse: collapse; width: 100%; }
+
+@font-face { font-family: pfdindisplaypro-bold-webfont; src: url("fonts/pfdindisplaypro-bold-webfont.eot"); src: url("fonts/pfdindisplaypro-bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/pfdindisplaypro-bold-webfont.woff2") format("woff2"), url("fonts/pfdindisplaypro-bold-webfont.woff") format("woff"), url("fonts/pfdindisplaypro-bold-webfont.ttf") format("truetype"); font-weight: normal; font-style: normal; }
+@font-face { font-family: pfdindisplaypro-light-webfont; src: url("fonts/pfdindisplaypro-light-webfont.eot"); src: url("fonts/pfdindisplaypro-light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/pfdindisplaypro-light-webfont.woff2") format("woff2"), url("fonts/pfdindisplaypro-light-webfont.woff") format("woff"), url("fonts/pfdindisplaypro-light-webfont.ttf") format("truetype"); font-weight: normal; font-style: normal; }
+@font-face { font-family: pfdindisplaypro-reg-webfont; src: url("fonts/pfdindisplaypro-reg-webfont.eot"); src: url("fonts/pfdindisplaypro-reg-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/pfdindisplaypro-reg-webfont.woff2") format("woff2"), url("fonts/pfdindisplaypro-reg-webfont.woff") format("woff"), url("fonts/pfdindisplaypro-reg-webfont.ttf") format("truetype"); font-weight: normal; font-style: normal; }
+@font-face { font-family: pfdindisplaypro-thin-webfont; src: url("fonts/pfdindisplaypro-thin-webfont.eot"); src: url("fonts/pfdindisplaypro-thin-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/pfdindisplaypro-thin-webfont.woff2") format("woff2"), url("fonts/pfdindisplaypro-thin-webfont.woff") format("woff"), url("fonts/pfdindisplaypro-thin-webfont.ttf") format("truetype"); font-weight: normal; font-style: normal; }
+body { font-size: 16px; line-height: 1.5; color: #d1d1d1; background-color: #000; font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif; font-weight: normal; }
+
+.clear { display: table; clear: both; height: 0; }
+
+a { text-decoration: none; color: #fff; }
+
+.f { background: url('../img/icons-s7d6d4922c6.png') 0 0 no-repeat; width: 10px; height: 17px; }
+
+.vk { background: url('../img/icons-s7d6d4922c6.png') 0 -79px no-repeat; width: 21px; height: 12px; }
+
+.tw { background: url('../img/icons-s7d6d4922c6.png') 0 -53px no-repeat; width: 18px; height: 16px; }
+
+.out { position: relative; height: 100%; }
+
+.h_conteiner { width: 640px; margin: 0 auto; }
+
+.l_container { position: relative; width: 840px; margin: 0 auto; height: 100%; }
+
+.header { position: fixed; width: 100%; height: 80px; background-color: #32333a; opacity: 0.8; z-index: 10; min-width: 640px; *zoom: 1; }
+.header:after { content: " "; display: table; clear: both; }
+.header__menu { float: left; font-size: 0; }
+.header__menu li { display: inline-block; margin-left: 35px; }
+.header__menu li:first-child { margin-left: 0; }
+.header__menu a { line-height: 80px; color: #8FC9AE; font-size: 16px; font-family: "pfdindisplaypro-light-webfont", Arial, sans-serif; font-weight: normal; -moz-transition: 0.4s; -o-transition: 0.4s; -webkit-transition: 0.4s; transition: 0.4s; }
+.header__menu a:hover { color: #fff; }
+
+.socio { float: right; line-height: 80px; }
+.socio a { display: inline-block; margin-left: 26px; line-height: 80px; }
+.socio a:first-child { margin-left: 0; }
+.socio i { display: block; }
+.socio i:hover { opacity: 0.7; }
+
+.window { width: 100%; height: 100%; position: absolute; }
+
+.main__img { position: fixed; top: 0; bottom: 0; height: 100%; left: 0; right: 0; width: 100%; background-image: url("../img/big.png"); -webkit-background-size: cover; -o-background-size: cover; background-size: cover; background-position: center; }
+
+.container__center { position: absolute; top: 50%; left: 0; width: 62%; -moz-transform: translate(0%, -50%); -ms-transform: translate(0%, -50%); -webkit-transform: translate(0%, -50%); transform: translate(0%, -50%); }
+.container__center h2 { font-size: 60px; color: #2C2D35; line-height: 1; font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif; font-weight: normal; }
+.container__center p { font-size: 20px; width: 65%; color: #000; margin: 20px 0 40px; font-family: "pfdindisplaypro-light-webfont", Arial, sans-serif; font-weight: normal; }
+
+.l { *zoom: 1; }
+.l:after { content: " "; display: table; clear: both; }
+.l .l-col1 { float: left; width: 20%; }
+.l .l-col2 { float: right; width: 70%; }
