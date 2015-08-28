@@ -53,17 +53,17 @@
 
 
 =pb
-	font-family: 'pfdindisplaypro-bold-webfont', Arial, sans-serif
-	font-weight: normal
+	font-family: "pfdindisplaypro-bold-webfont", Arial, sans-serif
+	font-weight: 700
 =pl
-	font-family: 'pfdindisplaypro-light-webfont', Arial, sans-serif
-	font-weight: normal
+	font-family: "pfdindisplaypro-light-webfont", Arial, sans-serif
+	font-weight: 300
 =pr
-	font-family: 'pfdindisplaypro-reg-webfont', Arial, sans-serif
-	font-weight: normal
+	font-family: "pfdindisplaypro-reg-webfont", Arial, sans-serif
+	font-weight: 400
 =pt
-	font-family: 'pfdindisplaypro-thin-webfont', Arial, sans-serif
-	font-weight: normal
+	font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif
+	font-weight: 100
 
 body
 	font-size: 16px
@@ -71,6 +71,7 @@ body
 	color: #d1d1d1
 	// min-width: 320px
 	background-color: #000
+	height: auto
 	+pt
 
 .clear
@@ -90,7 +91,7 @@ a
 //colors
 
 $n: transparent
-
+$colors: rgba(0, 0, 0, .6)
 .out
 	position: relative
 	height: 100%
@@ -147,11 +148,16 @@ $n: transparent
 	width: 100%
 	height: 100%
 	position: absolute
+	z-index: 5
+	// position: relative
 
-// @for $i from 1 through 6
-// 	.window:nth-child(#{$i})
-// 		background:nth($colors, $i)
-// 		top:($i - 1) * 100%
+
+@for $q from 2 through 6
+	.window:nth-child(#{$q})
+		background: ($colors)
+		top: ($q - 1) * 100%
+		// ~ .main__img
+			// +blur(5px)
 
 
 .main__img
@@ -168,44 +174,83 @@ $n: transparent
 	-o-background-size: cover
 	background-size: cover
 	background-position: center
-	// &_wrap
-	// 	+coverdiv
-	// 	img
-	// 		width: 100%
-	// 		height: 100%
+	z-index: 1
+	// +blur(0px)
+
 
 .container__center
 	position: absolute
 	top: 50%
 	left: 0
-	width: 62%
 	+translate(0%,-50%)
 	h2
 		font-size: 60px
-		color: #2C2D35
 		line-height: 1
+		color: #FFF
 		+pt
 	p
 		font-size: 20px
-		width: 65%
-		color: #000
-		margin: 20px 0 40px
 		+pl
+.dark__text
+	width: 62%
+	h2
+		color: #2C2D35
+	p
+		color: #000
+		width: 65%
+		margin: 20px 0 40px
+.buttons
+	a
+		display: inline-block
+		margin-left: 15px
+		vertical-align: top
+		&:first-child
+			margin-left: 0
+		&:hover
+			opacity: 0.7
+.appstore
+	+s(app)
+.g_play
+	+s(gpl)
 
+.white__text
+	width: 100%
 
+.task__wrap
+	margin: 55px auto
+.task
+	display: inline-block
+	max-width: 180px
+	padding-right: 80px
+	text-align: left
+	vertical-align: top
+	&:nth-child(3n)
+		padding-right: 0
+	img
+		display: inline-block
+		margin-bottom: 25px
+		vertical-align: top
+	h3
+		color: #FFF
+		font-size: 24px
+		line-height: 1
+		margin-bottom: 20px
 
-
-
-
-
-
-
-
-
-// delete this
-// .icon-marker
-// 	display: inline-block
-// 	+s($marker)
-// .icon-smile-svg
-// 	display: inline-block
-// 	+svg(smile,100,100)
+.make
+	position: relative
+	width: 370px
+	p
+		color: #FFF
+		margin: 2px auto
+		+pr
+	input
+		width: 300px
+		height: 38px
+		outline: none
+		border: 1px solid #fff
+		background-color: rgba(255, 255, 255, .2)
+.make__btn
+	position: absolute
+	bottom: 0
+	right: 0px
+	+s(send)
