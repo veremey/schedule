@@ -50,6 +50,7 @@
 +font(pfdindisplaypro-light-webfont, pfdindisplaypro-light-webfont)
 +font(pfdindisplaypro-reg-webfont, pfdindisplaypro-reg-webfont)
 +font(pfdindisplaypro-thin-webfont, pfdindisplaypro-thin-webfont)
++font(panton-thin-webfont, panton-thin-webfont)
 
 
 =pb
@@ -63,7 +64,7 @@
 	font-weight: 400
 =pt
 	font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif
-	font-weight: 100
+	font-weight: normal
 
 body
 	font-size: 16px
@@ -71,7 +72,6 @@ body
 	color: #d1d1d1
 	// min-width: 320px
 	background-color: #000
-	height: auto
 	+pt
 
 .clear
@@ -104,13 +104,15 @@ $colors: rgba(0, 0, 0, .6)
 	margin: 0 auto
 	height: 100%
 
+
+
 .header
 	position: fixed
 	width: 100%
 	height: 80px
 	background-color: #32333a
 	opacity: 0.8
-	z-index: 10
+	z-index: 100
 	min-width: 640px
 	+clr
 	&__menu
@@ -121,6 +123,9 @@ $colors: rgba(0, 0, 0, .6)
 			margin-left: 35px
 			&:first-child
 				margin-left: 0
+			&.is_active
+				a
+					color: #FFF
 		a
 			line-height: 80px
 			color: #8FC9AE
@@ -129,10 +134,10 @@ $colors: rgba(0, 0, 0, .6)
 			+tr(.4s)
 			&:hover
 				color: #fff
+
 .socio
 	float: right
 	line-height: 80px
-
 	a
 		display: inline-block
 		margin-left: 26px
@@ -144,28 +149,17 @@ $colors: rgba(0, 0, 0, .6)
 		&:hover
 			opacity: .7
 
-.window
-	width: 100%
-	height: 100%
-	position: absolute
-	z-index: 5
-	// position: relative
-
-
-@for $q from 2 through 6
-	.window:nth-child(#{$q})
-		background: ($colors)
-		top: ($q - 1) * 100%
-		// ~ .main__img
-			// +blur(5px)
-
-
 .main__img
+	+coverdiv
+	background-color: rgba(0, 0, 0, .5)
+	z-index: 2
+.main__img_wrap
 	// position: relative
-	position: fixed
+	position: absolute
 	top: 0
 	bottom: 0
-	height: 100%
+	height: 100% // для того, чтобы на весь экран, зависит от высоты экрана
+	// height: 800px
 	left: 0
 	right: 0
 	width: 100%
@@ -175,13 +169,17 @@ $colors: rgba(0, 0, 0, .6)
 	background-size: cover
 	background-position: center
 	z-index: 1
-	// +blur(0px)
-
+	&.blur
+		+blur(5px)
 
 .container__center
 	position: absolute
 	top: 50%
 	left: 0
+	z-index: 10
+	width: 100%// 29.08
+	// max-height: 80vh
+	// overflow: hidden
 	+translate(0%,-50%)
 	h2
 		font-size: 60px
@@ -192,11 +190,13 @@ $colors: rgba(0, 0, 0, .6)
 		font-size: 20px
 		+pl
 .dark__text
+	-webkit-box-shadow: none
+	box-shadow: none
 	width: 62%
 	h2
 		color: #2C2D35
 	p
-		color: #000
+		color: #d2d2d2
 		width: 65%
 		margin: 20px 0 40px
 .buttons
@@ -218,39 +218,95 @@ $colors: rgba(0, 0, 0, .6)
 
 .task__wrap
 	margin: 55px auto
+	width: 100%
+	margin-left: -20px
 .task
+	position: relative
 	display: inline-block
-	max-width: 180px
-	padding-right: 80px
+	width: 220px
+	padding: 20px
+	margin-right: 40px
 	text-align: left
 	vertical-align: top
+	-webkit-border-radius: 5px
+	border-radius: 5px
+	cursor: pointer
+	+box
 	&:nth-child(3n)
-		padding-right: 0
+		margin-right: 0
+		// float: right
+	&.is_active
+		background-color: rgba(0, 0, 0, .5)
+		&:after
+			content: ""
+			position: absolute
+			bottom: -8px
+			left: 50%
+			margin-right: 7px
+			+arr(13, 8, rgba(0, 0, 0, .5), b)
+		img
+			margin-left: 10px
 	img
 		display: inline-block
 		margin-bottom: 25px
 		vertical-align: top
+		+tr(.3s)
 	h3
 		color: #FFF
 		font-size: 24px
 		line-height: 1
 		margin-bottom: 20px
 
+.input__wrap
+	width: 303px
+	float: left
+.textarea__wrap
+	float: right
+	width: 303px
 .make
+	width: 305px
+#form_1,
+#form_2,
+#form_3
+	display: none
+	&.is_active
+		display: block
+form
+	width: 635px
 	position: relative
-	width: 370px
 	p
 		color: #FFF
 		margin: 2px auto
 		+pr
-	input
+	input,
+	textarea
 		width: 300px
 		height: 38px
 		outline: none
+		padding: 20px
+		font-size: 18px
+		color: #FFF
 		border: 1px solid #fff
 		background-color: rgba(255, 255, 255, .2)
+		+box
+		+pt
+	textarea
+		height: 122px
 .make__btn
 	position: absolute
 	bottom: 0
 	right: 0px
 	+s(send)
+.btn__send
+	display: inline-block
+	margin-top: 20px
+	line-height: 41px
+	padding: 0 20px 0 0px
+	background-color: #6AC3A8
+	text-transform: uppercase
+	+pr
+	i
+		display: inline-block
+		vertical-align: top
+		margin-right: 10px
+		+s(send)
