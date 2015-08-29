@@ -6,25 +6,34 @@ $(document).ready(function() {
 		$('.main__img_wrap').addClass('blur');
 	};
 
-	$('.task').on('click', function() {
+	$('.form_1').on('click', function() {
 		$(this).siblings().removeClass('is_active');
 		$(this).addClass('is_active');
+		$('#form_1').siblings(":not(a)").fadeOut('fast');
+		$('#form_1').fadeIn('fast');
+	});
+	$('.form_2').on('click', function() {
+		$(this).siblings().removeClass('is_active');
+		$(this).addClass('is_active');
+		$('#form_2').siblings(":not(a)").fadeOut('fast');
+		$('#form_2').fadeIn('fast');
+	});
+	$('.form_3').on('click', function() {
+		$(this).siblings().removeClass('is_active');
+		$(this).addClass('is_active');
+		$('#form_3').siblings(":not(a)").fadeOut('fast');
+		$('#form_3').fadeIn('fast');
 	});
 
-
-		if($('.form_1').hasClass('is_active')) {
-			alert('ФОРМА 111111');
-		};
-		if($('.form_2').hasClass('is_active')) {
-			alert('ФОРМА 22222222');
-			// $('#form_2').siblings().fadeOut();
-			// $('#form_2').fadeIn();
-		};
-		if($('.form_3').hasClass('is_active')) {
-			prompt('ФОРМА 33333333');
-			// $('#form_3').siblings().fadeOut();
-			// $('#form_3').fadeIn();
-		};
+	if($('.form_1').hasClass('is_active')){
+		$('#form_1').fadeIn('fast');
+	};
+	if($('.form_2').hasClass('is_active')){
+		$('#form_2').fadeIn('fast');
+	};
+	if($('.form_3').hasClass('is_active')){
+		$('#form_3').fadeIn('fast');
+	};
 
 
 
