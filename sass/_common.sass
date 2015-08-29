@@ -66,13 +66,28 @@
 	font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif
 	font-weight: normal
 
+
+=ost
+	font-family: "OpenSans", Arial, sans-serif
+	font-weight: 100
+=osl
+	font-family: "OpenSans", Arial, sans-serif
+	font-weight: 100
+=osr
+	font-family: "OpenSans", Arial, sans-serif
+	font-weight: 400
+=osb
+	font-family: "OpenSans", Arial, sans-serif
+	font-weight: 600
+
 body
 	font-size: 16px
 	line-height: 1.5
 	color: #d1d1d1
 	// min-width: 320px
 	background-color: #000
-	+pt
+	// +pt
+	+ost
 
 .clear
 	display: table
@@ -94,7 +109,7 @@ $n: transparent
 $colors: rgba(0, 0, 0, .6)
 .out
 	position: relative
-	height: 100%
+	height: 800px
 .h_conteiner
 	width: 640px
 	margin: 0 auto
@@ -103,11 +118,14 @@ $colors: rgba(0, 0, 0, .6)
 	width: 840px
 	margin: 0 auto
 	height: 100%
+	+r(860)
+		width: 738px
 
 
 
 .header
 	position: fixed
+	// position: relative
 	width: 100%
 	height: 80px
 	background-color: #32333a
@@ -118,6 +136,7 @@ $colors: rgba(0, 0, 0, .6)
 	&__menu
 		float: left
 		font-size: 0
+		margin-left: 25px
 		li
 			display: inline-block
 			margin-left: 35px
@@ -130,7 +149,8 @@ $colors: rgba(0, 0, 0, .6)
 			line-height: 80px
 			color: #8FC9AE
 			font-size: 16px
-			+pl
+			// +pl
+			+osl
 			+tr(.4s)
 			&:hover
 				color: #fff
@@ -151,6 +171,7 @@ $colors: rgba(0, 0, 0, .6)
 
 .main__img
 	+coverdiv
+	height: 800px
 	background-color: rgba(0, 0, 0, .5)
 	z-index: 2
 .main__img_wrap
@@ -158,8 +179,8 @@ $colors: rgba(0, 0, 0, .6)
 	position: absolute
 	top: 0
 	bottom: 0
-	height: 100% // для того, чтобы на весь экран, зависит от высоты экрана
-	// height: 800px
+	//height: 100% // для того, чтобы на весь экран, зависит от высоты экрана
+	height: 800px
 	left: 0
 	right: 0
 	width: 100%
@@ -185,10 +206,12 @@ $colors: rgba(0, 0, 0, .6)
 		font-size: 60px
 		line-height: 1
 		color: #FFF
-		+pt
+		// +pt
+		+ost
 	p
 		font-size: 20px
-		+pl
+		// +pl
+		+osl
 .dark__text
 	-webkit-box-shadow: none
 	box-shadow: none
@@ -219,11 +242,10 @@ $colors: rgba(0, 0, 0, .6)
 .task__wrap
 	margin: 55px auto
 	width: 100%
-	margin-left: -20px
 .task
 	position: relative
 	display: inline-block
-	width: 220px
+	width: 250px
 	padding: 20px
 	margin-right: 40px
 	text-align: left
@@ -232,6 +254,9 @@ $colors: rgba(0, 0, 0, .6)
 	border-radius: 5px
 	cursor: pointer
 	+box
+	+r(860)
+		width: 229px
+		margin-right: 20px
 	&:nth-child(3n)
 		margin-right: 0
 		// float: right
@@ -242,7 +267,7 @@ $colors: rgba(0, 0, 0, .6)
 			position: absolute
 			bottom: -8px
 			left: 50%
-			margin-right: 7px
+			margin-left: -7px
 			+arr(13, 8, rgba(0, 0, 0, .5), b)
 		img
 			margin-left: 10px
@@ -256,13 +281,16 @@ $colors: rgba(0, 0, 0, .6)
 		font-size: 24px
 		line-height: 1
 		margin-bottom: 20px
+		+osl
+	p
+		+osl
 
 .input__wrap
-	width: 303px
+	width: 48%
 	float: left
 .textarea__wrap
 	float: right
-	width: 303px
+	width: 48%
 .make
 	width: 305px
 #form_1,
@@ -271,16 +299,24 @@ $colors: rgba(0, 0, 0, .6)
 	display: none
 	&.is_active
 		display: block
+.form__wrap
+	margin-left: 20px
+	+r(820)
+		text-align: center
+		margin: 0
 form
-	width: 635px
 	position: relative
+	text-align: left
+	+r(820)
+		margin: 0 auto
 	p
 		color: #FFF
-		margin: 2px auto
-		+pr
+		margin: 10px auto 2px
+		// +pr
+		+osl
 	input,
 	textarea
-		width: 300px
+		width: 100%
 		height: 38px
 		outline: none
 		padding: 20px
@@ -289,9 +325,11 @@ form
 		border: 1px solid #fff
 		background-color: rgba(255, 255, 255, .2)
 		+box
-		+pt
+		// +pt
+		+osl
 	textarea
-		height: 122px
+		height: 126px
+		resize: none
 .make__btn
 	position: absolute
 	bottom: 0
@@ -304,7 +342,8 @@ form
 	padding: 0 20px 0 0px
 	background-color: #6AC3A8
 	text-transform: uppercase
-	+pr
+	// +pr
+	+osr
 	i
 		display: inline-block
 		vertical-align: top

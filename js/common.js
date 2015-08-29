@@ -11,18 +11,20 @@ $(document).ready(function() {
 		$(this).addClass('is_active');
 	});
 
+
 	function tab() {
 		if($('.form_1').hasClass('is_active')) {
-			$(this).siblings().fadeOut();
-			$('#form_1').fadeIn();
+			alert('ФОРМА 111111');
 		};
 		if($('.form_2').hasClass('is_active')) {
-			$(this).siblings().fadeOut();
-			$('#form_2').fadeIn();
+			alert('ФОРМА 22222222');
+			// $('#form_2').siblings().fadeOut();
+			// $('#form_2').fadeIn();
 		};
 		if($('.form_3').hasClass('is_active')) {
-			$(this).siblings().fadeOut();
-			$('#form_3').fadeIn();
+			prompt('ФОРМА 33333333');
+			// $('#form_3').siblings().fadeOut();
+			// $('#form_3').fadeIn();
 		}
 	}
 	tab();
