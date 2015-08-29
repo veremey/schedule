@@ -12,7 +12,6 @@ $(document).ready(function() {
 	});
 
 
-	function tab() {
 		if($('.form_1').hasClass('is_active')) {
 			alert('ФОРМА 111111');
 		};
@@ -25,9 +24,7 @@ $(document).ready(function() {
 			prompt('ФОРМА 33333333');
 			// $('#form_3').siblings().fadeOut();
 			// $('#form_3').fadeIn();
-		}
-	}
-	tab();
+		};
 
 
 
