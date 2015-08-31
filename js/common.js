@@ -39,13 +39,17 @@ $(document).ready(function() {
 	if($(document).width() < 768){
 		$('.task__wrap').slick({
 			dots: true,
-			infinite: false,
+			infinite: true,
 			speed: 900,
 			slidesToShow: 1,
 			slidesToScroll: 1,
 			adaptiveHeight: true
 		});
-	};
+
+		$('.task').removeClass('is_active');
+	}; //768
+
+
 
 	$('.btn__hiden-767').on('click',function() {
 		$('.header').toggleClass('header_100');

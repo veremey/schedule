@@ -17,7 +17,7 @@
 	overflow: hidden
 	display: block
 	margin: 0
-	padding: 0
+	padding: 0 0 10px 0
 	&:focus
 		outline: none
 	.slick-loading &
@@ -53,7 +53,7 @@
 .slick-slide
 	float: left
 	height: 100%
-	min-height: 1px
+	min-height: 275px
 	img
 		display: block
 		max-width: 100%
@@ -92,12 +92,13 @@
 		padding: 0 3px
 		&.slick-active
 			button
-				opacity: 0.3
+				opacity: 1
 				box-shadow: none
 		&:before
 			display: none
 	button
 		display: block
+		opacity: 0.3
 		width: 10px
 		height: 10px
 		background: #fff

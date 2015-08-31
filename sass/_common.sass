@@ -1,37 +1,24 @@
 
-+font(pfdindisplaypro-bold-webfont, pfdindisplaypro-bold-webfont)
-+font(pfdindisplaypro-light-webfont, pfdindisplaypro-light-webfont)
-+font(pfdindisplaypro-reg-webfont, pfdindisplaypro-reg-webfont)
-+font(pfdindisplaypro-thin-webfont, pfdindisplaypro-thin-webfont)
-+font(panton-thin-webfont, panton-thin-webfont)
++font(GothamProBold, GothamProBold)
++font(GothamProLight, GothamProLight)
++font(GothamProRegular, GothamProRegular)
++font(GothamProMedium, GothamProMedium)
 
 
-=pb
-	font-family: "pfdindisplaypro-bold-webfont", Arial, sans-serif
-	font-weight: 700
-=pl
-	font-family: "pfdindisplaypro-light-webfont", Arial, sans-serif
-	font-weight: 300
-=pr
-	font-family: "pfdindisplaypro-reg-webfont", Arial, sans-serif
-	font-weight: 400
-=pt
-	font-family: "pfdindisplaypro-thin-webfont", Arial, sans-serif
-	font-weight: normal
 
 
 =ost
-	font-family: "OpenSans", Arial, sans-serif
-	font-weight: 100
+	font-family: "GothamProMedium", Arial, sans-serif
+	font-weight: normal
 =osl
-	font-family: "OpenSans", Arial, sans-serif
-	font-weight: 100
+	font-family: "GothamProLight", Arial, sans-serif
+	font-weight: normal
 =osr
-	font-family: "OpenSans", Arial, sans-serif
-	font-weight: 400
+	font-family: "GothamProRegular", Arial, sans-serif
+	font-weight: normal
 =osb
-	font-family: "OpenSans", Arial, sans-serif
-	font-weight: 600
+	font-family: "GothamProBold", Arial, sans-serif
+	font-weight: normal
 
 body
 	font-size: 16px
@@ -166,7 +153,8 @@ $colors: rgba(0, 0, 0, .6)
 
 .main__img
 	+coverdiv
-	height: 800px
+	min-height: 800px
+	height: 100%
 	background-color: rgba(0, 0, 0, .5)
 	z-index: 2
 .main__img_wrap
@@ -215,7 +203,7 @@ $colors: rgba(0, 0, 0, .6)
 		// +pl
 		+osl
 		+r(767)
-			font-size: 18px
+			font-size: 17px
 .dark__text
 	-webkit-box-shadow: none
 	box-shadow: none
@@ -272,8 +260,9 @@ $colors: rgba(0, 0, 0, .6)
 		width: 229px
 		margin-right: 20px
 	+r(767)
-		margin-right: 0
-		margin-bottom: 10px
+		// margin-right: 0
+		// margin-bottom: 10px
+		margin: auto
 		text-align: center
 	&:nth-child(3n)
 		margin-right: 0
@@ -319,12 +308,12 @@ $colors: rgba(0, 0, 0, .6)
 		width: 100%
 		float: none
 .make
-	width: 320px
+	width: 340px
 	+r(767)
 		width: 300px
 		top: -21px
 		p
-			font-size: 18px
+			font-size: 17px
 		+ .btn__send
 			margin-top: 0
 #form_1,
@@ -351,9 +340,9 @@ form
 	input,
 	textarea
 		width: 100%
-		height: 38px
+		height: 36px
 		outline: none
-		padding: 20px
+		padding: 19px
 		font-size: 18px
 		color: #FFF
 		border: 1px solid #fff
