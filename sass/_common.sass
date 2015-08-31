@@ -124,8 +124,7 @@ $colors: rgba(0, 0, 0, .6)
 			line-height: 80px
 			color: #8FC9AE
 			font-size: 16px
-			// +pl
-			+osl
+			+osr
 			+tr(.4s)
 			&:hover
 				color: #fff
@@ -166,7 +165,8 @@ $colors: rgba(0, 0, 0, .6)
 	left: 0
 	right: 0
 	width: 100%
-	background-image: url("../img/big.png")
+	// background-image: url("../img/big.png")
+	background-image: url("../img/big1920.jpg")
 	-webkit-background-size: cover
 	-o-background-size: cover
 	background-size: cover
@@ -190,7 +190,7 @@ $colors: rgba(0, 0, 0, .6)
 		line-height: 1
 		color: #FFF
 		// +pt
-		+ost
+		+osr
 	.container__title
 		+r(767)
 			margin-top: 80px
@@ -198,16 +198,15 @@ $colors: rgba(0, 0, 0, .6)
 			margin-left: 10px
 			+ .task__wrap
 				margin-top: 20px
-	p
-		font-size: 20px
-		// +pl
-		+osl
-		+r(767)
-			font-size: 17px
+	// p
+	// 	font-size: 15px
+	// 	+osl
+	// 	+r(767)
+	// 		font-size: 17px
 .dark__text
 	-webkit-box-shadow: none
 	box-shadow: none
-	width: 62%
+	width: 80%
 	+r(767)
 		width: 94%
 		margin: 0 auto
@@ -217,8 +216,8 @@ $colors: rgba(0, 0, 0, .6)
 		+r(767)
 			font-size: 44px
 	p
-		color: #d2d2d2
-		width: 65%
+		color: #2C2D35
+		width: 60%
 		margin: 20px 0 40px
 		+r(767)
 			width: 90%
@@ -286,14 +285,23 @@ $colors: rgba(0, 0, 0, .6)
 		+tr(.3s)
 	h3
 		color: #FFF
-		font-size: 24px
+		font-size: 22px
 		line-height: 1
 		margin-bottom: 20px
-		+osl
+		+osr
 	p
+		font-size: 15px
 		+osl
 		+r(767)
 			margin-bottom: 20px
+			font-size: 17px
+	&.form_1,
+	&.form_2,
+	&.form_3
+		h3
+			font-size: 24px
+		p
+			font-size: 14px
 
 .input__wrap
 	width: 48%
@@ -335,8 +343,8 @@ form
 	p
 		color: #FFF
 		margin: 10px auto 2px
-		// +pr
-		+osl
+		font-size: 15px
+		+osr
 	input,
 	textarea
 		width: 100%
