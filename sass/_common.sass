@@ -324,10 +324,11 @@ $colors: rgba(0, 0, 0, .6)
 		float: none
 .make
 	position: relative
-	width: 340px
+	width: 100%
 	// margin-left: 20px
 	float: left
 	margin-right: 20px
+	text-align: center
 	+r(767)
 		width: 300px
 		top: -21px
@@ -337,6 +338,20 @@ $colors: rgba(0, 0, 0, .6)
 			font-size: 17px
 		+ .btn__send
 			margin-top: 0
+	&__your_name
+		float: left
+		width: 48%
+		text-align: left
+		+r(767)
+			float: none
+			width: 300px
+	&__your_tel
+		float: right
+		text-align: left
+		width: 48%
+		+r(767)
+			float: none
+			width: 300px
 #form_1,
 #form_2,
 #form_3
@@ -378,10 +393,8 @@ form
 			height: 70px
 .make__btn
 	float: left
-	margin-top: 110px
+	margin-top: 113px
 	+s(send)
-	+retina
-		margin-top: 114px
 	+r(767)
 		display: none
 
