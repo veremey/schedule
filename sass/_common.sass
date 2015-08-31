@@ -93,7 +93,7 @@ $colors: rgba(0, 0, 0, .6)
 	&__menu
 		float: left
 		font-size: 0
-		margin-left: 25px
+		// margin-left: 25px
 		+r(767)
 			width: 200px
 			text-align: center
@@ -246,6 +246,10 @@ $colors: rgba(0, 0, 0, .6)
 	width: 100%
 	+r(767)
 		margin: 92px auto 0px
+	&.get_left
+		margin-left: -20px
+		+r(767)
+			margin: 92px auto 0px
 .task
 	position: relative
 	display: inline-block
@@ -321,7 +325,7 @@ $colors: rgba(0, 0, 0, .6)
 .make
 	position: relative
 	width: 340px
-	margin-left: 20px
+	// margin-left: 20px
 	+r(767)
 		width: 300px
 		top: -21px
@@ -375,7 +379,7 @@ form
 	right: -70px
 	+s(send)
 	+retina
-		bottom: 3px
+		bottom: 5px
 	+r(767)
 		display: none
 
