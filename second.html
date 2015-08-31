@@ -6,13 +6,15 @@
 	<meta name="format-detection" content="telephone=no">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<link rel="stylesheet" media="all" href="css/screen.css" >
+	<link rel="icon" type="image/png" href="img/favicon.png">
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <!-- BEGIN out-->
 <div class="out">
 	<div class="header">
-		<div class="h_conteiner">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
 			<ul class="header__menu">
 				<li><a href="#">Добавить расписание</a></li>
 				<li><a href="#">Университетам</a></li>
@@ -32,8 +34,9 @@
 	</div>
 	<div class="l_container">
 		<div class="container__center">
-			<h2>Время действовать</h2>
-			<div class="task__wrap">
+			<div class="container__wrap">
+				<h2 class="container__title">Время действовать</h2>
+				<div class="task__wrap">
 					<div class="task">
 						<img src="img/ico-1.png" alt="">
 						<h3>Привлекательно</h3>
@@ -57,14 +60,16 @@
 						набирают популярность –
 						не отставайте</p>
 					</div>
-			</div>
-			<form action="" class="make">
+				</div>
+				<form action="" class="make">
 					<p>Как к Вам обращаться</p>
 					<input type="text" name="" class="make__name">
 					<p>Электронная почта или телефон</p>
 					<input type="text" name="" class="make__tel">
 					<a href="#" class="make__btn"></a>
-			</form>
+				</form>
+				<a href="#" class="btn__send hiden-767"><i></i>отправить</a>
+			</div>
 		</div>
 	</div>
 

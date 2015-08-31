@@ -1,51 +1,4 @@
-// # SHORT HOWTO
-// ## Sprites
-//     .whatever
-//          +sized-sprite($icons, coderiver) //or
-// 			+s(codedby) //gets default value for spritemap as $icons
-// ### animation example
-//     +include keyframes(rotate)
-//        from
-//           +rotate(0)
-//        to
-//           +rotate(360)
-// ## animation usage
-//     body:hover
-// 	    +animation(rotate 200s linear infinite)
-// ## animations easing, see easings.net for full list and examples, tnx @ai
-//     transition: all 1.2s ceaser($ease-in)
-// ## gradient example
-//     +background-image(linear-gradient(#232323, #5c5c5c));
-//     +g(#232323, #5c5c5c);
-//	   horizontal
-//     +gh(#232323, #5c5c5c);
-// ## making bw-images
-//     img
-//			@extend %gray
-// ## predefined media-queries: https://github.com/paranoida/sass-mediaqueries
-//     +min-screen(320)
-//			display: none
-// +max-screen(1000), +iphone5, +iphone4, +ipad-retina, +ipad, +hdpi - also available
-//
-// ## use cycles
-//     @for $i from 1 through 3
-//       .item-#{$i}
-//			width: 2em * $i;
-//     @each $s in a,b,c
-// 	    	#{$s}
-//				display: none
-// ## fonts
-// Save fonts to /css/fonts, after that write (eot, woff, ttf):
-// +font(book, cytiapro-black-webfont)
-// =book
-// 	font-family: "book", Arial, sans-serif
-// insert pics into css
-// div
-// 	+pic("blabla.png")
-// span
-// 	+png(blabla)
-// p
-// 	+jpg(bla)
+
 +font(pfdindisplaypro-bold-webfont, pfdindisplaypro-bold-webfont)
 +font(pfdindisplaypro-light-webfont, pfdindisplaypro-light-webfont)
 +font(pfdindisplaypro-reg-webfont, pfdindisplaypro-reg-webfont)
@@ -84,7 +37,7 @@ body
 	font-size: 16px
 	line-height: 1.5
 	color: #d1d1d1
-	// min-width: 320px
+	min-width: 300px
 	background-color: #000
 	// +pt
 	+ost
@@ -102,7 +55,6 @@ a
 	.#{$s}
 		+s(#{$s})
 
-
 //colors
 
 $n: transparent
@@ -110,9 +62,7 @@ $colors: rgba(0, 0, 0, .6)
 .out
 	position: relative
 	height: 800px
-.h_conteiner
-	width: 640px
-	margin: 0 auto
+
 .l_container
 	position: relative
 	width: 840px
@@ -120,9 +70,22 @@ $colors: rgba(0, 0, 0, .6)
 	height: 100%
 	+r(860)
 		width: 738px
-
-
-
+		overflow: hidden
+	+r(767)
+		width: 300px
+.btn__hiden-767
+	display: none
+	margin-top: 40px
+	position: absolute
+	top: -10px
+	left: 10px
+	+r(767)
+		display: inline-block
+		+s(buter)
+.hiden-767
+	display: none !important
+	+r(767)
+		display: inline-block !important
 .header
 	position: fixed
 	// position: relative
@@ -131,20 +94,45 @@ $colors: rgba(0, 0, 0, .6)
 	background-color: #32333a
 	opacity: 0.8
 	z-index: 100
-	min-width: 640px
+	+tr(.4s)
 	+clr
+	&.header_100
+		height: 100%
+		opacity: 0.9
+		+tr(.4s)
+		.header__menu
+			margin-top: 20%
+			+tr(.3s .2s)
 	&__menu
 		float: left
 		font-size: 0
 		margin-left: 25px
+		+r(767)
+			width: 200px
+			text-align: center
+			margin-left: 50px
 		li
 			display: inline-block
 			margin-left: 35px
+			+r(767)
+				display: none
+				text-align: center
+				margin-left: 0
+				opacity: 0
+				+tr(.2s)
 			&:first-child
 				margin-left: 0
 			&.is_active
 				a
 					color: #FFF
+				+r(767)
+					display: block
+					opacity: 1
+			&.is_act
+				display: block
+				color: #FFF
+				opacity: 1
+				+tr(.7s)
 		a
 			line-height: 80px
 			color: #8FC9AE
@@ -158,6 +146,13 @@ $colors: rgba(0, 0, 0, .6)
 .socio
 	float: right
 	line-height: 80px
+	+r(767)
+		display: none
+		+tr(.2s)
+		&.is_act
+			display: block
+			margin-right: 115px
+			+tr(.5s)
 	a
 		display: inline-block
 		margin-left: 26px
@@ -179,7 +174,6 @@ $colors: rgba(0, 0, 0, .6)
 	position: absolute
 	top: 0
 	bottom: 0
-	//height: 100% // для того, чтобы на весь экран, зависит от высоты экрана
 	height: 800px
 	left: 0
 	right: 0
@@ -190,17 +184,18 @@ $colors: rgba(0, 0, 0, .6)
 	background-size: cover
 	background-position: center
 	z-index: 1
+	+r(767)
+		background-position: 75%
 	&.blur
 		+blur(5px)
-
+.container__wrap
+	margin-top: 120px
 .container__center
 	position: absolute
 	top: 50%
 	left: 0
 	z-index: 10
-	width: 100%// 29.08
-	// max-height: 80vh
-	// overflow: hidden
+	width: 100%
 	+translate(0%,-50%)
 	h2
 		font-size: 60px
@@ -208,20 +203,37 @@ $colors: rgba(0, 0, 0, .6)
 		color: #FFF
 		// +pt
 		+ost
+	.container__title
+		+r(767)
+			margin-top: 80px
+			font-size: 44px
+			margin-left: 10px
+			+ .task__wrap
+				margin-top: 20px
 	p
 		font-size: 20px
 		// +pl
 		+osl
+		+r(767)
+			font-size: 18px
 .dark__text
 	-webkit-box-shadow: none
 	box-shadow: none
 	width: 62%
+	+r(767)
+		width: 94%
+		margin: 0 auto
+		left: 10px
 	h2
 		color: #2C2D35
+		+r(767)
+			font-size: 44px
 	p
 		color: #d2d2d2
 		width: 65%
 		margin: 20px 0 40px
+		+r(767)
+			width: 90%
 .buttons
 	a
 		display: inline-block
@@ -240,8 +252,10 @@ $colors: rgba(0, 0, 0, .6)
 	width: 100%
 
 .task__wrap
-	margin: 55px auto
+	margin: 35px auto
 	width: 100%
+	+r(767)
+		margin: 92px auto 0px
 .task
 	position: relative
 	display: inline-block
@@ -257,9 +271,12 @@ $colors: rgba(0, 0, 0, .6)
 	+r(860)
 		width: 229px
 		margin-right: 20px
+	+r(767)
+		margin-right: 0
+		margin-bottom: 10px
+		text-align: center
 	&:nth-child(3n)
 		margin-right: 0
-		// float: right
 	&.is_active
 		background-color: rgba(0, 0, 0, .5)
 		&:after
@@ -271,6 +288,8 @@ $colors: rgba(0, 0, 0, .6)
 			+arr(13, 8, rgba(0, 0, 0, .5), b)
 		img
 			margin-left: 10px
+			+r(767)
+				margin-left: 0
 	img
 		display: inline-block
 		margin-bottom: 25px
@@ -284,15 +303,29 @@ $colors: rgba(0, 0, 0, .6)
 		+osl
 	p
 		+osl
+		+r(767)
+			margin-bottom: 20px
 
 .input__wrap
 	width: 48%
 	float: left
+	+r(767)
+		width: 100%
+		float: none
 .textarea__wrap
 	float: right
 	width: 48%
+	+r(767)
+		width: 100%
+		float: none
 .make
-	width: 305px
+	width: 300px
+	+r(767)
+		top: -21px
+		p
+			font-size: 18px
+		+ .btn__send
+			margin-top: 0
 #form_1,
 #form_2,
 #form_3
@@ -330,16 +363,21 @@ form
 	textarea
 		height: 126px
 		resize: none
+		+r(767)
+			height: 70px
 .make__btn
 	position: absolute
-	bottom: 0
-	right: 0px
+	bottom: 1px
+	right: -70px
 	+s(send)
+	+r(767)
+		display: none
+
 .btn__send
 	display: inline-block
 	margin-top: 20px
 	line-height: 41px
-	padding: 0 20px 0 0px
+	padding: 1px 20px 0 0px
 	background-color: #6AC3A8
 	text-transform: uppercase
 	// +pr
