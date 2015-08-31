@@ -326,10 +326,13 @@ $colors: rgba(0, 0, 0, .6)
 	position: relative
 	width: 340px
 	// margin-left: 20px
+	float: left
+	margin-right: 20px
 	+r(767)
 		width: 300px
 		top: -21px
 		margin: 0
+		float: none
 		p
 			font-size: 17px
 		+ .btn__send
@@ -374,9 +377,8 @@ form
 		+r(767)
 			height: 70px
 .make__btn
-	position: absolute
-	bottom: 3px
-	right: -70px
+	float: left
+	margin-top: 108px
 	+s(send)
 	+retina
 		bottom: 5px
