@@ -47,6 +47,8 @@ $(document).ready(function() {
 		});
 
 		$('.task').removeClass('is_active');
+
+		$('.main__img_wrap').prepend('<div class="main__img"></div>');
 	}; //768
 
 

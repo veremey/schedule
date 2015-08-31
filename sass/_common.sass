@@ -48,8 +48,8 @@ $n: transparent
 $colors: rgba(0, 0, 0, .6)
 .out
 	position: relative
-	height: 800px
-
+	min-height: 800px
+	height: 100%
 .l_container
 	position: relative
 	width: 840px
@@ -137,7 +137,7 @@ $colors: rgba(0, 0, 0, .6)
 		+tr(.2s)
 		&.is_act
 			display: block
-			margin-right: 115px
+			margin-right: 97px
 			+tr(.5s)
 	a
 		display: inline-block
@@ -161,7 +161,8 @@ $colors: rgba(0, 0, 0, .6)
 	position: absolute
 	top: 0
 	bottom: 0
-	height: 800px
+	min-height: 800px
+	height: 100%
 	left: 0
 	right: 0
 	width: 100%
@@ -215,12 +216,14 @@ $colors: rgba(0, 0, 0, .6)
 		color: #2C2D35
 		+r(767)
 			font-size: 44px
+			color: #FFF
 	p
 		color: #2C2D35
 		width: 60%
 		margin: 20px 0 40px
 		+r(767)
 			width: 90%
+			color: #FFF
 .buttons
 	a
 		display: inline-block
@@ -316,10 +319,13 @@ $colors: rgba(0, 0, 0, .6)
 		width: 100%
 		float: none
 .make
+	position: relative
 	width: 340px
+	margin-left: 20px
 	+r(767)
 		width: 300px
 		top: -21px
+		margin: 0
 		p
 			font-size: 17px
 		+ .btn__send
@@ -359,7 +365,7 @@ form
 		// +pt
 		+osl
 	textarea
-		height: 126px
+		height: 115px
 		resize: none
 		+r(767)
 			height: 70px
