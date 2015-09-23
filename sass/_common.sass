@@ -143,13 +143,21 @@ $colors: rgba(0, 0, 0, .6)
 		display: inline-block
 		margin-left: 26px
 		line-height: 80px
+		text-align: center
 		&:first-child
 			margin-left: 0
+		+r(767)
+			width: 30px
+			height: 30px
+			margin-left: 10px
 	i
 		display: block
 		&:hover
 			opacity: .7
-
+		+r(767)
+			display: inline-block
+			line-height: 30px
+			margin: 0 auto
 .main__img
 	+coverdiv
 	min-height: 800px
@@ -186,6 +194,10 @@ $colors: rgba(0, 0, 0, .6)
 	z-index: 10
 	width: 100%
 	+translate(0%,-50%)
+	+r(767)
+		position: relative
+		top: 100px
+		+translate(0%,0%)
 	h2
 		font-size: 60px
 		line-height: 1
@@ -194,11 +206,17 @@ $colors: rgba(0, 0, 0, .6)
 		+osr
 	.container__title
 		+r(767)
-			margin-top: 80px
-			font-size: 44px
+			// margin-top: 80px
+			font-size: 37px
 			margin-left: 10px
 			+ .task__wrap
 				margin-top: 20px
+	.container__wrap
+		+r(767)
+			margin-top: 0
+	.task__wrap
+		+r(767)
+			margin-top: 0
 	// p
 	// 	font-size: 15px
 	// 	+osl
@@ -266,8 +284,7 @@ $colors: rgba(0, 0, 0, .6)
 		width: 229px
 		margin-right: 20px
 	+r(767)
-		// margin-right: 0
-		// margin-bottom: 10px
+		width: 100%
 		margin: auto
 		text-align: center
 	&:nth-child(3n)

@@ -23,7 +23,7 @@
             var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
             if(pattern.test(contact.value)){
 			contact.setAttribute("style", "border: 1px solid #fff");
-             
+
                  jQuery.ajax({
 					 url: url,
 					 type: "POST",
@@ -36,13 +36,13 @@
 					 document.getElementById(result_id).innerHTML = "<p>Возникла ошибка при отправке формы</p>";
 					 }
 					 });
-					 
+
 					 $(':input','#feedbackform')
 					 .not(':button, :submit, :reset, :hidden')
 					 .val('')
 					 .removeAttr('checked')
 					 .removeAttr('selected');
-				
+
             } else {
                contact.setAttribute("style", "border: 1px solid red");
                document.getElementById(result_id).innerHTML = "<p>Поле Email заполнено не верно</p>";
@@ -54,12 +54,12 @@
        } else {
 	   name.setAttribute("style", "border: 1px solid red");
             document.getElementById(result_id).innerHTML = "<p>Заполнены не все поля</p>";
-	   
+
 	   };
 
 
  };
- 
+
 </script>
 </head>
 <body>
@@ -127,12 +127,13 @@
 						<input type="text" name="contact" id="contact" value="">
 					</div>
 					<a href="#" onclick="AjaxFormRequest('messegeResult', 'feedbackform', '../mail/second.php')" class="btn__send"><i></i>отправить</a>
-					
+
 				</form>
 			</div>
 		</div>
 	</div>
-
+	<div class="clear"></div>
 </div>
+<script src="style/js/lib/head.js" data-headjs-load="style/js/init.js"></script>
 </body>
 </html>
