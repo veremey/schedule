@@ -25,7 +25,6 @@ body
 	line-height: 1.5
 	color: #d1d1d1
 	min-width: 300px
-	background-color: #000
 	// +pt
 	+ost
 
@@ -73,25 +72,12 @@ $colors: rgba(0, 0, 0, .6)
 	display: none !important
 	+r(767)
 		display: inline-block !important
-.logo
-	display: inline-block
-	margin-right: 20px
-	background-image: url("../img/logo.png")
-	width: 50px
-	height: 60px
-	-webkit-background-size: cover
-	-o-background-size: cover
-	background-size: cover
-	float: left
-	margin-top: 5px
-	+r(767)
-		float: right
-		margin-right: 0
 .header
 	position: fixed
 	// position: relative
 	width: 100%
 	height: 80px
+	top: 0
 	background-color: #32333a
 	opacity: 0.8
 	z-index: 100
@@ -426,3 +412,15 @@ form
 		vertical-align: top
 		margin-right: 10px
 		+s(send)
+
+
+
+
+// fix bag previus verstca ))
+
+.get__right
+	float: right
+	width: 100%
+.get__margin_auto
+	margin: 0 auto
+	text-align: center

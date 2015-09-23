@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../webform/css/style.css?v=17022015">
+	<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
+	<script src="../webform/js/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
+	<script src="../webform/js/jquery.initBlocks.js" type="text/javascript"></script>
+	<script src="../webform/js/share.js" type="text/javascript"></script>
+	<link rel="stylesheet" media="all" href="../style/css/screen.css" >
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<title>Расписание вузов - Восстановление пароля</title>
+    </head>
+    <body>
+	<div class="header">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
+			<ul class="header__menu">
+				<li><a href="../webform/step1.html">Добавить расписание</a></li>
+				<li><a href="../second.html">Университетам</a></li>
+				<li><a href="../third.html">Обратная связь</a></li>
+			</ul>
+			<div class="socio">
+				<a href="http://vk.com/rvuzov"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov"><i class="tw"></i></a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear" id="main">
+	    <div class="wrapper">
+		<div id="headline">
+
+			<div class="headline-title-text" id="headline-title" style="margin:0; text-align: center;">
+			    Восстановление пароля
+			</div>
+
+		</div>
+
+		<div class="text text-center">
+
+		    <p style="color:#4e4e4e;">Введите e-mail, который вы указали при регистрации.</p>
+
+		    <form id="recoverForm" action="" method="post">
+
+			<div class="row-info">
+			    <input type="text" name="email" class="form-input form-text input-normal">
+			</div>
+
+			<div class="row-info error-message text-center" id="error_message"></div>
+
+			<div class="btn-save">
+			    <button type="submit" name="submit_btn">Восстановить пароль</button>
+			</div>
+
+		    </form>
+
+		</div>
+
+	    </div>
+	</div>
+	<!-- <div class="clear" id="main">
+	       <div class="wrapper">
+		       <div style="background: none; text-align: center; width: 100%; margin-left: 0px; padding-left: 0px; font-size: 18px;">
+			   <iframe src="https://docs.google.com/forms/d/1ji1mVt62RphoRvJ9LwBZpx3v1VvdXJLGOmlREw6ZSv8/viewform?embedded=true" width="760" height="570" frameborder="0" marginheight="0" marginwidth="0">Загрузка...</iframe>
+		       </div>
+	       </div>
+       </div>-->
+	<div id="footer">
+	 
+	</div>
+
+<script type="text/javascript">
+    $(document).bind('ready', function(){
+
+	$('#recoverForm').bind( 'submit', function(){
+
+	    var field_email = $('input[name="email"]','#recoverForm');
+	    var email = field_email.val();
+	    field_email.css('border-color','#bababa');
+
+	    if ( email && /^([^@]+)@([^\.@]+)\.([^\.]+)$/.test(email) ) {
+
+		var post_data = '{"email":"'+email+'"}';
+
+		$.ajax({
+		    type: 'post',
+		    url: '/api/v2/users/password/recover',
+		    data: post_data,
+		    success: function(data){
+			alert('Письмо со сменой пароля отправлено на ваш e-mail.');
+		    },
+		    error: function(data){
+			alert('Неправильно введен e-mail.');
+		    },
+		    isLocal: false,
+		    dataType: 'json',
+		    contentType: 'application/json; charset=UTF-8'
+		});
+
+	    }else{
+		field_email.css('border-color','#ff0000');
+	    }
+
+	    return false;
+	});
+
+    });
+</script>
+
+
+
+</body>
+</html>

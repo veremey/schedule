@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.textchange.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.10.4.custom.js"></script>
+	<link rel="stylesheet" href="css/flick/jquery-ui-1.10.4.custom.css" type="text/css" />
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/webform/js/datetimepicker/jquery.datetimepicker.css" type="text/css" />
+	<script src="/webform/js/datetimepicker/jquery.datetimepicker.js"></script>
+
+	<link href="/webform/js/select2/select2.css" rel="stylesheet"/>
+	<script src="/webform/js/select2/select2.min.js"></script>
+
+	<script src="/webform/js/shedule_step1.js?v=17022015"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<link rel="stylesheet" media="all" href="../style/css/screen.css" >
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<title>Расписание вузов - Добавление расписания</title>
+
+</head>
+<body>
+	<div class="header">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
+			<ul class="header__menu">
+				<li class="is_active" ><a href="step1.html">Добавить расписание</a></li>
+				<li><a href="../second.html">Университетам</a></li>
+				<li><a href="../third.html">Обратная связь</a></li>
+			</ul>
+			<div class="socio">
+				<a href="http://vk.com/rvuzov"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov"><i class="tw"></i></a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+
+	 <div class="clear" id="main">
+		<div class="wrapper">
+			<div id="headline">
+				<a class="btn-step arrow-left" id="btn-step1" href="../index.html">Вернуться на главную</a>
+				<div class="float-right headline-title-text" id="headline-title">Добавление / Изменение расписания</div><br/>
+			</div>
+			<div class="clear" id="wrapper-form">
+
+			    <div class="row clear" style="margin-top: 23px;">
+				    <div class="col">
+					    <label style="padding-top: 9px;">Город</label>
+				    </div>
+				    <div class="col right">
+					    <input type="hidden" class="form-text input-long" id="search-city">
+					    <!--select id="search-city">
+
+					    </select-->
+				    </div>
+			    </div>
+			    <div class="row clear" style="margin-top: 23px;">
+				    <div class="col">
+					    <label style="padding-top: 9px;" for="search-vyz">ВУЗ</label>
+				    </div>
+				    <div class="col right">
+					    <input type="hidden" class="form-text input-long" id="search-vyz">
+				    </div>
+			    </div>
+			    <div class="row clear" style="margin-top: 23px;">
+				    <div class="col">
+					    <label style="padding-top: 9px;">Факультет</label>
+				    </div>
+				    <div class="col right">
+					    <input type="hidden" class="form-text input-long" id="search-fac">
+				    </div>
+			    </div>
+
+			    <div class="row clear" style="margin-top: 23px;">
+				    <div class="col">
+					    <label style="padding-top: 9px;">Название группы</label>
+				    </div>
+				    <div class="col right">
+					    <input type="hidden" class="form-text input-long" id="group_name" />
+				    </div>
+			    </div>
+			    <div class="row clear">
+				    <div class="col right tip">
+					    Название группы должно включать в себя номер курса.
+				    </div>
+			    </div>
+
+			    <div class="row clear" style="margin-top: 5px;">
+				<div class="col right get__right">
+				    <div id="formMessage" class="tip"></div>
+
+				    <div id="facLink" class="tip" style="display: none;">
+					<p>Добавьте ссылку на сайт вашего вуза/факультета</p>
+					<input type="text" class="form-input form-text input-normal">
+				    </div>
+				</div>
+			    </div>
+
+			    <div class="row btn-next" style="background: none; text-align: center; width: 100%; margin-left: 0px; margin-top: 20px;">
+				<a href="#" class="step2">
+				    <span class="underline">Перейти к добавлению/изменению</span>
+				    <img src="image/arrow-right.png">
+				</a>
+			    </div>
+			</div>
+		</div>
+
+		<!-- popup-add-value -->
+		<div class="modal" id="popup-add-value">
+		    <div class="modal-b">
+			<div class="headline-title-text popup-headline" style="margin-bottom: 15px;">Добавить</div>
+
+			<form action="" method="post">
+			    <div class="field-row" style="width:350px;">
+				<label for="opt_value">
+				    Новое значение
+				</label>
+				<div>
+				    <input type="text" class="form-input form-text input-normal" id="opt_value" name="opt_value">
+				</div>
+			    </div>
+			    <div class="buttons-row">
+				<div class="button-left">
+				    <div class="btn-cancel-add btn-cancel">
+					<a href="#">Отменить</a>
+				    </div>
+				</div>
+				<div class="btn-save float-left">
+				    <a style="font-size: 14px;" href="#">Сохранить</a>
+				</div>
+			    </div>
+			</form>
+
+		    </div>
+		</div>
+		<!-- /popup-add-value -->
+
+	 </div>
+
+
+
+	<div class="modal-overlay"></div>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21116644 = new Ya.Metrika({id:21116644,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21116644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+</body>
+</html>

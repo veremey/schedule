@@ -1,13 +1,66 @@
+
+
 <!doctype html>
 <html>
 <head>
-	<title>second</title>
+	<title>Расписание ВУЗов - Университетам</title>
 	<meta charset="utf-8">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-	<link rel="stylesheet" media="all" href="css/screen.css" >
-	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="stylesheet" media="all" href="style/css/screen.css" >
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<script>
+ function AjaxFormRequest(result_id,feedbackform,url) {
+    var contact = document.getElementById("contact");
+	var name = document.getElementById("name");
+
+	if(name.value != '') {
+	name.setAttribute("style", "border: 1px solid #fff");
+        if(contact.value != '') {
+            var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
+            if(pattern.test(contact.value)){
+			contact.setAttribute("style", "border: 1px solid #fff");
+             
+                 jQuery.ajax({
+					 url: url,
+					 type: "POST",
+					 dataType: "html",
+					 data: jQuery("#"+feedbackform).serialize(),
+					 success: function(response) {
+					 document.getElementById(result_id).innerHTML = response;
+					 },
+					 error: function(response) {
+					 document.getElementById(result_id).innerHTML = "<p>Возникла ошибка при отправке формы</p>";
+					 }
+					 });
+					 
+					 $(':input','#feedbackform')
+					 .not(':button, :submit, :reset, :hidden')
+					 .val('')
+					 .removeAttr('checked')
+					 .removeAttr('selected');
+				
+            } else {
+               contact.setAttribute("style", "border: 1px solid red");
+               document.getElementById(result_id).innerHTML = "<p>Поле Email заполнено не верно</p>";
+            }
+        } else {
+           contact.setAttribute("style", "border: 1px solid red");
+            document.getElementById(result_id).innerHTML = "<p>Поле Email не заполнено</p>";
+        };
+       } else {
+	   name.setAttribute("style", "border: 1px solid red");
+            document.getElementById(result_id).innerHTML = "<p>Заполнены не все поля</p>";
+	   
+	   };
+
+
+ };
+ 
+</script>
 </head>
 <body>
 <!-- BEGIN out-->
@@ -15,16 +68,15 @@
 	<div class="header">
 		<div class="l_container">
 			<button class="btn__hiden-767"></button>
-			<i class="logo"></i>
 			<ul class="header__menu">
-				<li><a href="#">Добавить расписание</a></li>
-				<li><a href="#">Университетам</a></li>
-				<li class="is_active"><a href="#">Обратная связь</a></li>
+				<li><a href="webform/step1.html">Добавить расписание</a></li>
+				<li class="is_active"><a href="second.html">Университетам</a></li>
+				<li><a href="third.html">Обратная связь</a></li>
 			</ul>
 			<div class="socio">
-				<a href="#"><i class="vk"></i></a>
-				<a href="#"><i class="f"></i></a>
-				<a href="#"><i class="tw"></i></a>
+				<a href="http://vk.com/rvuzov" target="_blank"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov" target="_blank"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov" target="_blank"><i class="tw"></i></a>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -36,52 +88,51 @@
 	<div class="l_container">
 		<div class="container__center">
 			<div class="container__wrap">
-				<h2 class="container__title">Время действовать</h2>
+				<h2 class="container__title">Преимущества для ВУЗов</h2>
 				<div class="task__wrap get_left">
-					<a href="#" class="task">
-						<img src="img/ico-1.png" alt="">
+					<div class="task">
+						<img src="style/img/ico-1.png" alt="">
 						<h3>Привлекательно</h3>
 						<p>Создайте дополнительную
 						ценность для студентов
-						и аббитуриентов</p>
-					</a>
+						и абитуриентов</p>
+					</div>
 
-					<a href="#" class="task">
-						<img src="img/ico-2.png" alt="">
+					<div class="task">
+						<img src="style/img/ico-2.png" alt="">
 						<h3>Быстро</h3>
 						<p>Никаких издержек –
 						достаточно написать нам
 						и мы все сделаем за вас</p>
-					</a>
+					</div>
 
-					<a href="#" class="task">
-						<img src="img/ico-3.png" alt="">
+					<div class="task">
+						<img src="style/img/ico-3.png" alt="">
 						<h3>Современно</h3>
 						<p>Мобильные технологии
 						набирают популярность –
 						не отставайте</p>
-					</a>
+					</div>
 				</div>
-				<form action="" class="make">
+				<form method="POST" action="" id="feedbackform" class="make" name="formname">
+				<div id="messegeResult">
+        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+    </div>
 					<div class="make__your_name">
 						<p>Как к Вам обращаться</p>
-						<input type="text" name="">
+						<input type="text" name="name" id="name" value="" >
 					</div>
 					<div class="make__your_tel">
-						<p>Электронная почта или телефон</p>
-						<input type="text" name="" >
+						<p>Электронная почта</p>
+						<input type="text" name="contact" id="contact" value="">
 					</div>
-					<a href="#" class="btn__send"><i></i>отправить</a>
+					<a href="#" onclick="AjaxFormRequest('messegeResult', 'feedbackform', '../mail/second.php')" class="btn__send"><i></i>отправить</a>
+					
 				</form>
 			</div>
 		</div>
 	</div>
 
 </div>
-
-</body>
-</html>
-<!-- load scripts -->
-<script src="js/lib/head.js" data-headjs-load="js/init.js"></script>
 </body>
 </html>

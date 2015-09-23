@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<title>Расписание вузов - Добавление расписаниия</title>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery-ui-1.10.4.custom.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery.textchange.min.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery.scrollTo.min.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery-ui.multidatespicker.js"></script>
+	<script type="text/javascript" src="/js/mobile.js"></script>
+	<link rel="stylesheet" href="/webform/css/flick/jquery-ui-1.10.4.custom.css" type="text/css" />
+	<script src="http://www.google.com/recaptcha/api.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+	<link rel="stylesheet" href="/webform/js/datetimepicker/jquery.datetimepicker.css" type="text/css" />
+	<script src="/webform/js/datetimepicker/jquery.datetimepicker.js"></script>
+	<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<link rel="stylesheet" media="all" href="../style/css/screen.css" >
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<link href="/webform/js/select2/select2.css" rel="stylesheet"/>
+	<script src="/webform/js/select2/select2.min.js"></script>
+	
+	<link href="/webform/js/autocomplete/jquery.autocomplete.css" rel="stylesheet"/>
+	<script src="/webform/js/autocomplete/jquery.autocomplete.js"></script>
+	
+	<script src="/webform/js/backbone/underscore-min.js"></script>
+	<script src="/webform/js/backbone/backbone-min.js"></script>
+	<script src="/webform/js/backbone/backbone.localStorage-min.js"></script>
+	<script src="/webform/js/controller_schedule.js?v=05022015"></script>
+	<script src="/webform/js/shedule_session.js?v=05022015"></script>
+	
+	<script type="text/javascript">
+	    $(document).bind('ready',function(){
+		app.init();
+	    });
+	</script>
+	
+</head>
+<body style="/*noinspection CssInvalidElement*/overflow: y-scroll">
+    <div class="header">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
+			<ul class="header__menu">
+				<li class="is_active" ><a href="step1.html">Добавить расписание</a></li>
+				<li><a href="../second.html">Университетам</a></li>
+				<li><a href="../third.html">Обратная связь</a></li>
+			</ul>
+			<div class="socio">
+				<a href="http://vk.com/rvuzov"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov"><i class="tw"></i></a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+    
+    <div id="main">
+	<div class="wrapper" id="lessonsapp">
+	    <div id="headline">
+		<a class="btn-step arrow-left" id="btn-step2" href="step1.html">Назад</a>
+		<div class="float-right headline-title-text" id="headline-title" style="margin-right: 170px;">Добавление/Изменение расписания</div>
+	    </div>
+	    <div class="clear" id="wrapper-form">
+		
+		<div class="row clear">
+		<div class="col">
+		</div>
+		    <div class="col right">
+			
+			
+			<label>
+			    <input type="radio" name="shedule_type" value="1" />
+			    Семестр
+			</label>
+			<label>
+			    <input type="radio" name="shedule_type" value="2" />
+			    Семестр - Мед. ВУЗы
+			</label>
+			<label>
+			    <input type="radio" name="shedule_type" value="3" checked="checked" />
+			    Зачетная неделя/сессия/консультация
+			</label>
+			<div id="error_message" class="tip error-message"></div>
+		    </div>
+		</div>
+		
+		<br><br>
+		
+		<div class="popup-raspisanie">
+		    
+		    <div id="btn-new-shedule">
+			<div>
+			    <a href="#" class="btn btn-new"><span>Новое расписание</span></a>
+			    <span style="display:none;">Вы уверены?&nbsp;</span>
+			    <a href="#" class="btn btn-ok" title="Да" style="display:none;"></a>
+			    <a href="#" class="btn btn-cancel" title="Отмена" style="display:none;"></a>
+			</div>
+		    </div>
+		    
+		    <div class="shedule-table" id="sheduleTable">
+			<table>
+			    <colgroup>
+				<col width="20%">
+				<col width="20%">
+				<col width="20%">
+				<col width="40%">
+			    </colgroup>
+			    <thead>
+				<tr class="lesson">
+				    <td class="headline-table table-head">
+					Дата
+				    </td>
+				    <td class="headline-table table-head">
+					Время
+				    </td>
+				    <td class="headline-table table-head">
+					Аудитория
+				    </td>
+				    <td class="headline-table table-head">
+					Занятие
+				    </td>
+				</tr>
+			    </thead>
+			    <tbody id="lessons-list">
+				
+			    </tbody>
+			    <tfoot>
+				<tr class="lesson row-day">
+				    <td colspan="4" class="text-center">
+					
+					<a href="#" class="link-button icn-add" id="button-add-lesson">Добавить занятие</a>
+					
+					<div class="add-lesson-session" id="add-lesson-container"></div>
+					
+				    </td>
+				</tr>
+			    </tfoot>
+			</table>
+			
+		    </div>
+		    
+		    <br /><br /><br />
+		    
+		    <div class="text-center">
+			<a href="#" class="link-button green icn-send" id="button-send-data" style="font-size: 16px;">Отправить</a>
+		    </div>
+		</div>
+		
+	    </div>
+	</div>
+	
+	
+	
+	<!-- popup-add-place -->
+	<div class="modal" id="popup-add-place">
+	    <div class="modal-b">
+		<div class="headline-title-text popup-headline">Добавить аудиторию</div>
+		<div class="row clear" style="margin-top: 21px;">
+		    <div class="col" style="width: 197px;">
+			<label style="padding-top: 9px;">№ аудитории<span class="red">*</span></label>
+		    </div>
+		    <div class="col right" style="width: 280px;">
+			<input type="text" class="form-input form-text input-medium" placeholder="17" id="number-place">
+		    </div>
+		</div>
+		<div class="row clear" style="margin-top: 9px;">
+		    <div class="col" style="width: 197px;">
+			<label style="padding-top: 9px;">Улица</label>
+		    </div>
+		    <div class="col right" style="width: 280px;">
+			<input type="text" class="form-input form-text input-popup" placeholder="ул. Ленина" id="street-place">
+		    </div>
+		</div>
+		<div class="row clear" style="margin-top: 9px;">
+		    <div class="col" style="width: 197px;">
+			<label style="padding-top: 9px;">Дом</label>
+		    </div>
+		    <div class="col right" style="width: 280px;">
+			<input type="text" class="form-input form-text input-xsmall" placeholder="4" id="house-place">
+			корп.
+			<input type="text" class="form-input form-text input-xsmall" placeholder="2" id="corpus-place">
+			стр.
+			<input type="text" class="form-input form-text input-xsmall" placeholder="2А" id="build-place">
+		    </div>
+		</div>
+		<div class="row clear" style="margin-top: 9px;">
+		    <div class="col" style="width: 197px;">
+			<label style="padding-top: 9px;">Название строения</label>
+		    </div>
+		    <div class="col right" style="width: 280px;">
+			<input type="text" class="form-input form-text input-popup" placeholder="Дом на Ленинке" id="name-place">
+		    </div>
+		</div>
+		<div class="row info">
+		    <span class="red">*</span> &mdash; обязательное поле
+		</div>
+		<div class="clearfix"></div>
+		
+		<div class="buttons-row">
+		    <div class="button-left">
+			<div class="btn-cancel-add btn-cancel">
+			    <a href="#">Отменить</a>
+			</div>
+		    </div>
+		    <div class="btn-save float-left">
+			<a style="font-size: 14px;" id="addPlace" href="#">Сохранить</a>
+		    </div>
+		</div>
+	    </div>
+	</div>
+	<!-- /popup-add-place -->
+	
+	<!-- popup-confirm-email -->
+	<div class="modal" id="popup-confirm-email">
+	    <div class="modal-b">
+		<div class="headline-title-text popup-headline" style="margin-bottom: 15px;">Укажите email для обратной связи</div>
+		<form action="" method="post">
+		    <table class="table-padding" style="margin-left: 70px;">
+			<tr>
+			    <td>
+				email
+			    </td>
+			    <td>
+				<input type="text" class="form-input form-text input-normal" name="email" placeholder="user@raspisaniye-vuzov.ru">
+				<div class="tip" style="width: auto; margin-right: 0px">
+				    Убедитесь, что email корректный
+				</div>
+			    </td>
+			</tr>
+			<tr>
+			    <td colspan="2">
+				<div class="recaptcha-cont">
+				    <div class="g-recaptcha" data-sitekey="6LcBXP8SAAAAAMnNtLYSGEVA0yHN_exfL6QbenMJ"></div>
+				</div>
+			    </td>
+			</tr>
+			<tr>
+			    <td colspan="2">
+				<div class="tip sendform-error"></div>
+			    </td>
+			</tr>
+		    </table>
+		    
+		    <div class="btn-save text-center" style="margin: 0 auto;">
+			<a href="#" class="email-submit" id="sheduleSend">Отправить</a>
+		    </div>
+		</form>
+		
+	    </div>
+	</div>
+	<!-- /popup-confirm-email -->
+	
+	<div class="modal-overlay"></div>
+
+<script type="text/template" id="item-template">
+    <td>
+	<%- date %>
+    </td>
+    <td class="col-time table-time">
+	<%- time_start %> - <%- time_end %>
+    </td>
+    <td class="cell-lesson-empty">
+	<div class="location-lesson" style="margin:0;"><%- auditory_name %></div>
+    </td>
+    <td class="no-padding">
+	
+	<div class="overlay-container">
+	    
+	    <div class="type-session-lesson">
+		<%- typeName %>
+	    </div>
+	    
+	    <div class="session-lesson">
+		
+		<div class="name-lesson">
+		    <strong><%- subject %></strong>
+		</div>
+		<div class="teacher-lesson">
+		    <%- teacher_name %>
+		</div>
+		
+	    </div>
+	    
+	    <div class="lesson-overlay">
+		<div class="lesson-overlay-b">
+		    <div class="popup-edit-lesson">
+			<a class="edit" href="#">Редактировать</a>
+		    </div>
+		    <a class="popup-btn remove" href="#" title="Удалить занятие"></a>
+		</div>
+	    </div>
+	    
+	</div>
+	
+    </dt>
+</script>
+
+<script type="text/template" id="add-box-template">
+    <form id="lessonForm" action="" method="">
+	<table>
+	    <tr>
+		<td>Дата</td>
+		<td>
+		    <input type="text" name="date" value="<%- date %>" class="form-input datepicker" style="width:160px;" />
+		</td>
+		<td>Название предмета</td>
+		<td>
+		    <input type="text" name="subject" value="<%- subject %>" class="form-input" style="width:210px;" />
+		</td>
+	    </tr>
+	    <tr>
+		<td>Время</td>
+		<td>
+		    с <input type="text" name="time_start" value="<%- time_start %>" class="form-input input-small" />
+		    по <input type="text" name="time_end" value="<%- time_end %>" class="form-input input-small" />
+		</td>
+		<td>Тип занятия</td>
+		<td>
+		    <select name="type" style="width:230px;" data-value="<%- type %>">
+		    
+		    </select>
+		</td>
+	    </tr>
+	    <tr>
+		<td>Аудитория</td>
+		<td>
+		    <!--select name="auditory_id" class="class-lesson" style="width:180px;" data-value="<%- auditory_id %>">
+			<option value="">Выберите аудиторию...</option>
+			<option value="add">+ Добавить</option>
+		    </select-->
+		    <input type="hidden" name="auditory_id" value="" data-width="230" data-value="<%- auditories_json %>" />
+		</td>
+		<td>Преподаватель</td>
+		<td>
+		    <input type="hidden" name="teacher_id" value="" data-width="230" data-value="<%- teachers_json %>" />
+		</td>
+	    </tr>
+	</table>
+	<div class="buttons-row">
+	    <div class="button-left">
+		<div class="btn-cancel-add btn-cancel">
+		    <a href="#" class="cancel">Отменить</a>
+		</div>
+	    </div>
+	    <div class="btn-save float-left">
+		<a href="#" class="save">Сохранить</a>
+	    </div>
+	</div>
+    </form>
+</script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21116644 = new Ya.Metrika({id:21116644,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21116644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+</body>
+</html>

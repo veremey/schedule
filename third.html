@@ -1,13 +1,81 @@
 <!doctype html>
 <html>
 <head>
-	<title>third</title>
+	<title>Расписание ВУЗов - обратная связь</title>
 	<meta charset="utf-8">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-	<link rel="stylesheet" media="all" href="css/screen.css" >
-	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="stylesheet" media="all" href="style/css/screen.css" >
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script>
+ function AjaxFormRequest(result_id,feedbackform,url,name,contact,text) {
+    var contact = document.getElementById(contact);
+	var name = document.getElementById(name);
+	var text = document.getElementById(text);
+
+	if(name.value != '') {
+	name.setAttribute("style", "border: 1px solid #fff");
+        if(contact.value != '') {
+            var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
+            if(pattern.test(contact.value)){
+			contact.setAttribute("style", "border: 1px solid #fff");
+             if(text.value != '') {
+			 text.setAttribute("style", "border: 1px solid #fff");
+                 jQuery.ajax({
+					 url: url,
+					 type: "POST",
+					 dataType: "html",
+					 data: jQuery("#"+feedbackform).serialize(),
+					 success: function(response) {
+					 document.getElementById(result_id).innerHTML = response;
+					 },
+					 error: function(response) {
+					 document.getElementById(result_id).innerHTML = "<p>Возникла ошибка при отправке формы</p>";
+					 }
+					 });
+					 
+					 $(':input','#form_1')
+					 .not(':button, :submit, :reset, :hidden')
+					 .val('')
+					 .removeAttr('checked')
+					 .removeAttr('selected');
+					 $(':input','#form_2')
+					 .not(':button, :submit, :reset, :hidden')
+					 .val('')
+					 .removeAttr('checked')
+					 .removeAttr('selected');
+					 $(':input','#form_3')
+					 .not(':button, :submit, :reset, :hidden')
+					 .val('')
+					 .removeAttr('checked')
+					 .removeAttr('selected');
+				} else {
+				text.setAttribute("style", "border: 1px solid red");
+               document.getElementById(result_id).innerHTML = "<p>Поле Сообщение не заполнено</p>";
+				
+				};
+				
+				
+            } else {
+               contact.setAttribute("style", "border: 1px solid red");
+               document.getElementById(result_id).innerHTML = "<p>Поле Email заполнено не верно</p>";
+            }
+        } else {
+           contact.setAttribute("style", "border: 1px solid red");
+            document.getElementById(result_id).innerHTML = "<p>Поле Email не заполнено</p>";
+        };
+       } else {
+	   name.setAttribute("style", "border: 1px solid red");
+            document.getElementById(result_id).innerHTML = "<p>Заполнены не все поля</p>";
+	   
+	   };
+
+
+ };
+ 
+</script>
 </head>
 <body>
 <!-- BEGIN out-->
@@ -15,16 +83,15 @@
 	<div class="header">
 		<div class="l_container">
 			<button class="btn__hiden-767"></button>
-			<i class="logo"></i>
 			<ul class="header__menu">
-				<li><a href="#">Добавить расписание</a></li>
-				<li><a href="#">Университетам</a></li>
-				<li class="is_active"><a href="#">Обратная связь</a></li>
+				<li><a href="webform/step1.html">Добавить расписание</a></li>
+				<li><a href="second.html">Университетам</a></li>
+				<li class="is_active"><a href="third.html">Обратная связь</a></li>
 			</ul>
 			<div class="socio">
-				<a href="#"><i class="vk"></i></a>
-				<a href="#"><i class="f"></i></a>
-				<a href="#"><i class="tw"></i></a>
+				<a href="http://vk.com/rvuzov" target="_blank"><i class="vk" ></i></a>
+				<a href="https://www.facebook.com/rvuzov" target="_blank"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov" target="_blank"><i class="tw"></i></a>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -37,13 +104,13 @@
 		<div class="container__center">
 			<div class="task__wrap">
 				<a href="#" class="task form_1  is_active">
-					<img src="img/i1.png" alt="">
+					<img src="style/img/i1.png" alt="">
 					<h3>Проблема</h3>
 					<p>Расскажите нам  об ошибке или проблеме –  мы исправим</p>
 				</a>
 
 				<a href="#" class="task form_2">
-					<img src="img/i2.png" alt="">
+					<img src="style/img/i2.png" alt="">
 					<h3>Идея</h3>
 					<p>Поделитесь идеями
 					и улучшениями– мы их
@@ -51,55 +118,71 @@
 				</a>
 
 				<a href="#" class="task form_3">
-					<img src="img/i3.png" alt="">
-					<h3>Поговорить</h3>
-					<p>Мы готовы ответить
-					на любые вопросы,
-					на разные темы</p>
+					<img src="style/img/i3.png" alt="">
+					<h3>Расписания</h3>
+					<p>Присылайте нам
+					расписания своего
+					университета</p>
 				</a>
 			</div>
 
 			<div class="form__wrap">
 				<form action="" id="form_1">
-					<div class="input__wrap">
-						<p>Как к Dfv обращаться</p>
-						<input type="text" name="" class="make__name">
-						<p>Электронная почта или телефон</p>
-						<input type="text" name="" class="make__tel">
-					</div>
-					<div class="textarea__wrap">
-						<p>Сообщение</p>
-						<textarea name="" ></textarea>
-					</div>
-					<div class="clear"></div>
-				</form>
-				<form action="" id="form_2">
-					<div class="input__wrap">
-						<p>Как к аться</p>
-						<input type="text" name="" class="make__name">
-						<p>Электронная почта или телефон</p>
-						<input type="text" name="" class="make__tel">
-					</div>
-					<div class="textarea__wrap">
-						<p>Сообщение</p>
-						<textarea name="" ></textarea>
-					</div>
-					<div class="clear"></div>
-				</form>
-				<form action="" id="form_3">
+				<div id="messegeResult1">
+        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+    </div>
 					<div class="input__wrap">
 						<p>Как к Вам обращаться</p>
-						<input type="text" name="" class="make__name">
-						<p>Электронная почта или телефон</p>
-						<input type="text" name="" class="make__tel">
+						<input type="text" id="name1"  name="name1" value="" class="make__name">
+						<p>Электронная почта</p>
+						<input type="text" id="contact1"  name="contact1" value="" class="make__tel">
 					</div>
 					<div class="textarea__wrap">
 						<p>Сообщение</p>
-						<textarea name="" ></textarea>
+						<textarea id="text1"  name="text1"value="" ></textarea>
 					</div>
 					<div class="clear"></div>
+					<a href="#" onclick="AjaxFormRequest('messegeResult1', 'form_1', '../mail/third1.php','name1','contact1','text1')"  class="btn__send"><i></i>отправить</a>
 				</form>
-				<a href="#" class="btn__send"><i></i>отправить</a>
+				
+				
+				<form action="" id="form_2">
+								<div id="messegeResult2">
+        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+    </div>
+					<div class="input__wrap">
+						<p>Как к Вам обращаться</p>
+						<input type="text" id="name2" name="name2" value="" class="make__name">
+						<p>Электронная почта</p>
+						<input type="text"  id="contact2" name="contact2" value="" class="make__tel">
+					</div>
+					<div class="textarea__wrap">
+						<p>Сообщение</p>
+						<textarea  id="text2" name="text2" value=""></textarea>
+					</div>
+					<div class="clear"></div>
+					<a href="#" onclick="AjaxFormRequest('messegeResult2', 'form_2', '../mail/third2.php','name2','contact2','text2')" class="btn__send"><i></i>отправить</a>
+				</form>
+				
+				
+				<form action="" id="form_3">
+				<div id="messegeResult3">
+        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+    </div>
+					<div class="input__wrap">
+						<p>Как к Вам обращаться</p>
+						<input type="text"  name="name3" id="name3" value="" class="make__name">
+						<p>Электронная почта</p>
+						<input type="text" id="contact3"  name="contact3" value="" class="make__tel">
+					</div>
+					<div class="textarea__wrap">
+						<p>Сообщение</p>
+						<textarea name="text3" id="text3" value=""></textarea>
+					</div>
+					<div class="clear"></div>
+					<a href="#" onclick="AjaxFormRequest('messegeResult3', 'form_3', '../mail/third3.php','name3','contact3','text3')" class="btn__send"><i></i>отправить</a>
+				</form>
+				
 			</div>
 		</div>
 	</div>
@@ -109,6 +192,6 @@
 </body>
 </html>
 <!-- load scripts -->
-<script src="js/lib/head.js" data-headjs-load="js/init.js"></script>
+<script src="style/js/lib/head.js" data-headjs-load="style/js/init.js"></script>
 </body>
 </html>

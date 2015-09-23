@@ -1,0 +1,2657 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script type="text/javascript" src="/webform/js/jquery-ui-1.10.4.custom.js"></script>
+		<script type="text/javascript" src="/webform/js/jquery.textchange.min.js"></script>
+		<script type="text/javascript" src="/webform/js/jquery.scrollTo.min.js"></script>
+		<script type="text/javascript" src="/webform/js/jquery-ui.multidatespicker.js"></script>
+		<script type="text/javascript" src="/js/mobile.js"></script>
+		<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<link rel="stylesheet" media="all" href="../style/css/screen.css" >
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/webform/css/flick/jquery-ui-1.10.4.custom.css" type="text/css" />
+		<title>Расписание вузов - Добавление расписаниия</title>
+		<script>
+			var typeLessons = ['Практика', 'Лабораторная работа','Лекция','Семинар','Консультация','Внеучебное занятие','Зачет','Экзамен', 'Самостоятельная работа'];
+			var groups = [];
+			var places = '';
+			var context = '';
+			var audTitle = [];
+			var audAdress =[];
+
+			var get = parseGetParams();
+			if((get.idFac == undefined) || (get.univer == undefined) || (get.fac == undefined)){
+			    //document.location.href = 'step1.html';
+			}
+
+			function testDate(date){
+			    var re = /^[0-3][0-9]\.[0|1][0-9]\.[2][0][0|1][0-9]$/;
+			    return re.test(date);
+			}
+
+			function testTime(time){
+			    var re = /^\d{2}:\d{2}:\d{2}$/;
+			    return re.test(time);
+			}
+
+			function validateTime(value) {
+			    var re = /^([0-1][0-9]|[2][0-3])(:([0-5][0-9]))$/;
+			    return re.test(value);
+			}
+
+			function validateHours(value) {
+			    var re = /^([0-9]|[0-1][0-9]|[2][0-3])$/;
+			    return re.test(value);
+			}
+
+			function validateMinutes(value) {
+			    var re = /^([0-9]|[0-5][0-9])$/;
+			    return re.test(value);
+			}
+
+			function parseTime(value) {
+			    var time = value.split(":");
+			    return { hh: time[0], mm: time[1] };
+			}
+
+			function validateTimes(start, end) {
+			    var startDt = new Date(0);
+			    var endDt = new Date(0);
+			    startDt.setHours(parseTime(start).hh);
+			    startDt.setMinutes(parseTime(start).mm);
+
+			    endDt.setHours(parseTime(end).hh);
+			    endDt.setMinutes(parseTime(end).mm);
+
+			    if (endDt > startDt) {
+				return false;
+			    }
+
+			    return true;
+			}
+
+			function plusTime(time, plus){
+				var t = new Date(0);
+				var nDateStr = '';
+				t.setHours(parseTime(time).hh);
+				t.setMinutes(parseTime(time).mm);
+				t.setTime(t.getTime() + (plus * 60 * 1000));
+				if(t.getHours() < 10) {
+					nDateStr = '0';
+				}
+				nDateStr = nDateStr + t.getHours() + ':';
+				if(t.getMinutes() < 10){
+					nDateStr = nDateStr + '0';
+				}
+				nDateStr = nDateStr + t.getMinutes();
+				return nDateStr;
+			}
+
+			function deleteYear(date){
+				var path = date.split('.');
+				return path[0] + '.' + path[1];
+			}
+
+			function parseGetParams() {
+			   var $_GET = {};
+			   var __GET = window.location.search.substring(1).split("&");
+			   for(var i=0; i<__GET.length; i++) {
+			      var getVar = __GET[i].split("=");
+			      $_GET[getVar[0]] = typeof(getVar[1])=="undefined" ? "" : getVar[1];
+			   }
+			   return $_GET;
+			}
+
+			function buildTable(dataTable){
+				var nameGroups = [dataTable.group_name];
+				var i = 0;
+				var j = 0;
+				var s = 0;
+				var numberGroups = 1;
+				var regx = /\s*,\s*/;
+				var comment = '';
+
+				while(i < 7) {
+					j = 0;
+					while(dataTable.days[i].lessons[j] != undefined){
+						var groups = dataTable.days[i].lessons[j].extra_groups.split('/\s*,\s*/');
+						s = 0;
+						while(groups[s] != undefined){
+							if((nameGroups.indexOf(groups[s]) == -1) && (groups[s] != "")){
+								nameGroups[nameGroups.length] = groups[s];
+								numberGroups++;
+							}
+							s++;
+						}
+						j++;
+					}
+					i++;
+				}
+
+				var localGroup = [];
+				var k = 0;
+				var firstDay = 1;
+				var table = '<table style="border: 1px #bababa solid; width: 100%;"><col class="col1"/><col class="col1"/>';
+				i = 0;
+				j = 0;
+				s = 0;
+				while(i < numberGroups){
+					table += '<col class="col1"/>';
+					i++;
+				}
+				table += '<tr class="lesson"><td class="col-day"></td><td class="headline-table col-time table-head">Время</td>';
+				i = 0;
+				while(i < numberGroups){
+					table += '<td class="headline-table col-group table-head">Группа <span class="table-name-group">' + nameGroups[i] + '</span></td>';
+					i++;
+				}
+				table += '</tr>';
+
+				i = 0;
+				while(i < 7){
+					firstDay = 1;
+					j = 0;
+					var nextLesson = 0;
+					while(dataTable.days[i].lessons[j] != null){
+						les = dataTable.days[i].lessons[j];
+						comment = '';
+						if(firstDay == 1){
+							table += '<tr class="lesson row-day"><td class="col-day">' + dataTable.days[i].name_day + '</td>';
+							firstDay = 0;
+						} else {
+							table += '<tr class="lesson"><td class="col-day"></td>';
+						}
+						table += '<td class="col-time table-time">' + les.time_start + '-' + les.time_end+ '</td>';
+
+						localGroup = les.extra_groups.split(regx);
+						if(localGroup.indexOf(dataTable.group_name) == -1){
+							localGroup[localGroup.length] = dataTable.group_name;
+						}
+						s = 0;
+						while(s < numberGroups){
+							if(localGroup.indexOf(nameGroups[s]) != -1){
+								colspan = 1;
+								k = s + 1;
+								while(localGroup.indexOf(nameGroups[k]) != -1){
+									colspan++;
+									s++;
+									k++;
+								}
+								if(les.subject != ''){
+									var name = 'Редактировать';
+									var lStyle = '';
+								} else {
+									var name = 'Добавить пару';
+									var lStyle = 'style="background: #fff;"';
+									var cStyle = 'style="border: 0px;"'
+								}
+								table += '<td class="col-group cell-lesson" colspan="' + colspan + '" ' + cStyle + '><div class="table-lesson" ' + lStyle + '><div class="lesson-overlay"><div class="popup-edit-lesson"><a href="#" class="btn-cancel-table btn-edit-table" id_day="' + (i+1) + '">' + name + '</a></div></div>';
+
+								if(les.subject != ''){
+									table += '<div class="headline-lesson clear"><div class="type-lesson float-right">' +  typeLessons[les.type] + '</div><div class="name-lesson">' + les.subject + '</div></div>';
+									if(les.parity != 0){
+										if(les.parity != null){
+											table += '<div style="margin-top: 4px;"><div class="float-right"><img src="image/' + les.parity + '.png"></div></div>';
+											if(dataTable.days[i].lessons[j+1] != undefined){
+												if(les.parity == 1 && dataTable.days[i].lessons[j+1].parity == 2 && les.time_start == dataTable.days[i].lessons[j+1].time_start && les.time_end == dataTable.days[i].lessons[j+1].time_end){
+													nextLesson = 1;
+												}
+											}
+										} else {
+											if(les.dates == undefined){
+												comment = '<div class="comment-lesson"><img src="image/mark.png" style="vertical-align: bottom; margin-right: 6px;">с ' + deleteYear(les.date_start) + ' по ' + deleteYear(les.date_end) + '</div>';
+											} else {
+												comment = '<div class="comment-lesson"><img src="image/mark.png" style="vertical-align: bottom; margin-right: 6px;">';
+												var p = 0;
+												while(les.dates[p] != undefined){
+
+													if(p != 0){
+														comment += ', ';
+													}
+													comment += les.dates[p];
+													p++;
+												}
+												comment +='</div>';
+											}
+										}
+									}
+									if(les.auditories[0].auditory_name == null) {
+										les.auditories[0].auditory_name = '-';
+									}
+									table += '<div class="teacher-lesson">' + les.teachers[0].teacher_name + '</div><div class="location-lesson">' + les.auditories[0].auditory_name + '</div>';
+									table += comment;
+									if(nextLesson == 1){
+										table += '<div style="border-bottom: 1px #000 dashed; margin: 10px 0px;"></div><div class="lesson-overlay"><div class="popup-edit-lesson"><a href="#">Редактировать</a></div></div><div class="headline-lesson clear"><div class="type-lesson float-right">' +  typeLessons[dataTable.days[i].lessons[j+1].type] + '</div><div class="name-lesson">' + dataTable.days[i].lessons[j+1].subject + '</div></div>';
+										table += '<div style="margin-top: 4px;"><div class="float-right"><img src="image/' + dataTable.days[i].lessons[j+1].parity + '.png"></div></div>';
+										table += '<div class="teacher-lesson">' + dataTable.days[i].lessons[j+1].teachers[0].teacher_name + '</div><div class="location-lesson">' + dataTable.days[i].lessons[j+1].auditories[0].auditory_name + '</div>';
+									}
+								} else {
+									table += '<div class="type-lesson float-right"></div><div class="name-lesson">&nbsp</div><div class="teacher-lesson" style="background: none;"></div><div class="location-lesson" style="background: none;"></div>';
+								}
+							} else {
+								table += '<td class="col-group"></td>';
+							}
+							s++;
+						}
+						table +='</tr>';
+						if(nextLesson == 1){
+							j++;
+							nextLesson = 0;
+						}
+						j++;
+					}
+					i++;
+				}
+
+				$('.popup-raspisanie table').remove();
+				$('.popup-raspisanie .popup-headline').after(table);
+			}
+
+			function trim(s)
+			{
+			  return rtrim(ltrim(s));
+			}
+
+			function ltrim(s)
+			{
+			  return s.replace(/^\s+/, '');
+			}
+
+			function rtrim(s)
+			{
+			  return s.replace(/\s+$/, '');
+			}
+
+			function buildForSend(event){
+				var data = {};
+				var getData = parseGetParams();
+				var i = 0;
+				var f = 0;
+				var j = 0;
+				data.faculties = [];
+				data.faculties[0] = {};
+				data.faculties[0].faculty_name = decodeURI(getData.fac);
+				data.faculties[0].date_start = getData.dateStart;
+				data.faculties[0].date_end = getData.dateEnd;
+				data.faculties[0].groups = [];
+				data.faculties[0].groups[0] = {};
+				data.faculties[0].groups[0].group_name = $('#group_name').val();
+				data.faculties[0].groups[0].days = [];
+				while(i < 7){
+					if($('div[day=' + (i+1) + ']').children('.wrap-raspisanie:first').find('#name-lesson').val() != ""){
+						data.faculties[0].groups[0].days[j] = {};
+						data.faculties[0].groups[0].days[j].weekday = i + 1;
+						data.faculties[0].groups[0].days[j].lessons = [];
+						$('div[day=' + (i+1) + ']').children('.wrap-raspisanie').each(function(){
+							var les = data.faculties[0].groups[0].days[j].lessons;
+							les[les.length] = {};
+							les[les.length - 1].subject = trim($(this).find('#name-lesson').val());
+							les[les.length - 1].type = parseInt($(this).find('.lesson-type').val());
+
+                            var formatTime = function (hours, minutes) {
+                                hours = (hours.length !== 1) ? hours : "0" + hours;
+                                minutes = (minutes.length !== 1) ? minutes : "0" + minutes;
+                                return hours + ":" + minutes;
+                            }
+
+                            var hoursStart = $(this).find('.time-start.hours').val();
+							if (hoursStart != '') {
+								les[les.length - 1].time_start = formatTime(hoursStart, $(this).find('.time-start.minutes').val());
+							} else {
+								les[les.length - 1].time_start = '00:00';
+							}
+
+                            var hoursEnd = $(this).find('.time-end.hours').val();
+							if (hoursEnd != '') {
+								les[les.length - 1].time_end = formatTime(hoursEnd, $(this).find('.time-end.minutes').val());
+							} else {
+								les[les.length - 1].time_end = '23:59';
+
+							}
+
+							les[les.length - 1].teachers = [];
+							var tchs = $(this).find('.teacher-lesson-input').val().split(",");
+							$.each(tchs, function(key, val){
+								les[les.length - 1].teachers[les[les.length - 1].teachers.length] = {};
+                                var teacherName = trim(val);
+								les[les.length - 1].teachers[les[les.length - 1].teachers.length - 1].teacher_name = (teacherName !== "") ? teacherName : null;
+							})
+							les[les.length - 1].auditories = [];
+							les[les.length - 1].auditories[0] = {};
+							if($(this).find('.class-lesson').val() != 'Выберите аудиторию...'){
+								les[les.length - 1].auditories[0].auditory_name = $(this).find('.class-lesson').val();
+								les[les.length - 1].auditories[0].auditory_address = $(this).find('.class-lesson option:selected').attr('adress');
+							} else {
+								les[les.length - 1].auditories[0].auditory_name = null;
+								les[les.length - 1].auditories[0].auditory_address = null;
+							}
+							if($(this).find('input.lesson-not-regular').is(':checked')){
+								radio = $(this).find('input[type=radio]:checked');
+								order = radio.attr('order');
+								les[les.length - 1].parity = null;
+								if(order == 1){
+									les[les.length - 1].parity = radio.parent().parent().parent().children('.right').children('select').val();
+								} else if(order == 2){
+									les[les.length - 1].date_start = radio.parent().parent().parent().find('.date-start').val();
+									les[les.length - 1].date_end = radio.parent().parent().parent().find('.date-end').val();
+								} else {
+									var dts = $(this).find('.dates').val().split(',');
+									les[les.length - 1].dates = [];
+									$.each(dts, function(key, val){
+										les[les.length - 1].dates[les[les.length - 1].dates.length] = val;
+									});
+								}
+							} else {
+								les[les.length - 1].parity = 0;
+							}
+						});
+						j++;
+					}
+					i++;
+				}
+
+		if(f == 0){
+
+		    var jsonData_obj = {
+                        email: $("#email").val(),
+                        groupName: $("#group_name").val(),
+                        cityId: (isNaN(get.city) ? null : get.city),
+                        cityName: get.nameCity,
+                        idUniversity: (isNaN(get.univer) ? null : get.univer),
+                        idFaculty: (isNaN(get.idFac) ? null : get.idFac),
+                        universityName: get.nameUniver,
+                        facultyName: get.fac,
+                        json: JSON.stringify(data)
+                    }
+
+                    var jsonData = JSON.stringify( jsonData_obj );
+
+		    console.log( jsonData_obj );
+
+		    /*
+                    $.ajax({
+                        url: '/api/v1/schedule/new',
+                        type: "POST",
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        async: true,
+                        data: jsonData,
+                        cache: false,
+                        success: function() {
+                            window.location = 'step3.html';
+                        },
+                        error: function() {
+                            //$("#sendform-error").text("Произошла ошибка, сервер не может обработать Ваш запрос. Напишите нам об этом.").fadeIn(200).delay(2000).fadeOut(1000);
+                        }
+                    });
+                    */
+                    //setTimeout(function() {window.location.href = 'step3.html';},2000);
+
+                } else {
+					event.preventDefault();
+				}
+			}
+
+			function buildForTable(){
+				var data = {};
+				var i = 0;
+				var numLes = 0;
+				var order = 0;
+				var re = /\s*,\s*/;
+				var name_days = ["Понедельник","Вторник","Среда","Четверг","Пятница","Cуббота","Воскресенье"];
+				data["group_name"] = $('#group_name').val();
+				data["days"] = [];
+				while(i < 7){
+					data.days[data.days.length] = {};
+					data.days[i].name_day = name_days[i];
+					data.days[i].lessons = [];
+					$('div[day=' + (i+1) + ']').children('.wrap-raspisanie').each(function(){
+						dl = data.days[i].lessons;
+						dl[dl.length] = {};
+						dl[dl.length - 1].subject = $(this).find('#name-lesson').val() || '';
+						dl[dl.length - 1].type = $(this).find('.lesson-type').val();
+						if(($(this).find('.time-start.hours').val() != '') && ($(this).find('.time-start.hours').val() != undefined)){
+							dl[dl.length - 1].time_start = $(this).find('.time-start.hours').val() + ':' + $(this).find('.time-start.minutes').val();
+						} else {
+							dl[dl.length - 1].time_start = '';
+						}
+						if(($(this).find('.time-end.hours').val() != '') && ($(this).find('.time-end.hours').val() != undefined)){
+							dl[dl.length - 1].time_end = $(this).find('.time-end.hours').val() + ':' + $(this).find('.time-end.minutes').val();
+						} else {
+							dl[dl.length - 1].time_end = '';
+						}
+						dl[dl.length - 1].teachers = [{}];
+						dl[dl.length - 1].teachers[0].teacher_name = $(this).find('.teacher-lesson-input').val();
+						dl[dl.length - 1].auditories = [{}];
+						if($(this).find('.class-lesson').val() != 'Выберите аудиторию...'){
+							dl[dl.length - 1].auditories[0].auditory_name = $(this).find('.class-lesson').val();
+							dl[dl.length - 1].auditories[0].auditory_adress = $(this).find('.class-lesson option:selected').attr('adress');
+						}else{
+							dl[dl.length - 1].auditories[0].auditory_name = null;
+							dl[dl.length - 1].auditories[0].auditory_adress = null;
+						}
+						dl[dl.length - 1].extra_groups = $(this).find('.extra-groups').val();
+						if($(this).find('input.lesson-not-regular').is(':checked')){
+							radio = $(this).find('input[type=radio]:checked');
+							order = radio.attr('order');
+							dl[dl.length - 1].parity = null;
+							if(order == 1){
+								dl[dl.length - 1].parity = radio.parent().parent().parent().children('.right').children('select').val();
+
+							} else if(order == 2){
+								dl[dl.length - 1].date_start = radio.parent().parent().parent().find('.date-start').val();
+								dl[dl.length - 1].date_end = radio.parent().parent().parent().find('.date-end').val();
+							} else {
+								dl[dl.length - 1].dates = [];
+								var dates = radio.parent().parent().parent().find('.dates').val().split(re);
+								$.each(dates, function(key, val){
+									dl[dl.length - 1].dates[key] = val;
+								});
+							}
+						} else {
+							dl[dl.length - 1].parity = 0;
+						}
+					});
+					i++;
+				}
+				return data;
+			}
+
+			$('document').ready(function(){
+
+                            buildTable(buildForTable());
+
+				var default_time_from = '09:00';
+				var default_time_to = '10:30';
+
+				$('.btn-slide').click(function(){
+					var id_day = $(this).attr('id-day');
+					if($(this).hasClass('up')){
+						$(this).removeClass('up');
+						$(this).addClass('down');
+						$(this).children('span').text('развернуть');
+						$('div [day = ' + id_day + ']').hide();
+					} else {
+						$(this).removeClass('down');
+						$(this).addClass('up');
+						$(this).children('span').text('свернуть');
+						$('div[day = ' + id_day + ']').show();
+					}
+					return false;
+				});
+
+				if(get.idFac/get.idFac){
+					$.getJSON('/api/v1/faculties/' + get.idFac + '/groups', function(data){
+						var div = '<div class="autocomplete">';
+						var first = 1;
+						$.each(data.data, function(key, val){
+							groups[groups.length] = val.title;
+						});
+					});
+				}
+
+				function getAuditories(){
+					if(get.univer/get.univer){
+						$.getJSON('/api/v1/universities/' + get.univer + '/auditories', function(data){
+	    				$.each(data.data, function(key, val){
+		    				audTitle[audTitle.length] = val.auditory_name;
+		    				audAdress[audAdress.length] = val.auditory_address;
+		    				places += '<option adress="' + val.auditory_address + '" value="' + val.auditory_name + '">' + val.auditory_name + '</option>';
+		    			});
+		    			$('.class-lesson').append(places);
+	    			});
+					}
+				}
+
+    			function refreshAuditories(){
+    				places = '<option>Выберите аудиторию...</option><option value="add">Добавить аудиторию</option>';
+    				$.each(audTitle, function(key, val){
+	    				places += '<option adress="' + audAdress[key] + '" value="' + val + '">' + val + '</option>';
+	    			});
+	    			return places;
+    			}
+
+    			function addAuditories(){
+
+    			}
+
+    			getAuditories();
+
+    			$('.teacher-lesson-input').bind('textchange', function (event, previousText) {
+    				var th = this;
+					$.getJSON('../api/v1/universities/' + get.univer + '/teachers', function(data){
+    					var div = '<div class="autocomplete">';
+    					var first = 1;
+    					var search = $(th).val();
+    					search = search.toLowerCase();
+    					$.each(data.data, function(key, val){
+    						if (-1 < val.teacher_name.toLowerCase().indexOf(search)) {
+    							if(first == 1){
+    								div += '<div class="form-input form-text input-normal autocomplete-item">' + val.teacher_name + '</div>';
+    								first = 0;
+    							} else {
+    								div += '<div class="form-input form-text input-normal autocomplete-item" style="border-top: 0px;">' + val.teacher_name + '</div>';
+    							}
+    						}
+    					});
+    					div += '</div>';
+    					$('.autocomplete').remove();
+    					if(first == 0 && search != ""){
+    						$(th).parent().append(div);
+    					}
+    				});
+				});
+
+				$(document).on('click', '.autocomplete-item', function(){
+					var elem = $(this);
+					elem.parent().parent().children('input').attr('id_univer', elem.attr('id_univer')).val(elem.text());
+					$('.autocomplete').remove();
+				});
+
+				$('#group_name').bind('textchange', function (event, previousText) {
+					var th = this;
+					var div = '<div class="autocomplete">';
+					var first = 1;
+					var search = $(th).val();
+					search = search.toLowerCase();
+					$.each(groups, function(key, val){
+						if (-1 < val.toLowerCase().indexOf(search)) {
+							if(first == 1){
+								div += '<div class="form-input form-text input-normal autocomplete-item">' + val + '</div>';
+								first = 0;
+							} else {
+								div += '<div class="form-input form-text input-normal autocomplete-item" style="border-top: 0px;">' + val + '</div>';
+							}
+						}
+					});
+					div += '</div>';
+					$('.autocomplete').remove();
+					if(first == 0 && search != ""){
+						$('#group_name').parent().append(div);
+					}
+				});
+
+				$('.hours').bind('textchange', function (event, previousText) {
+					if($(this).val().length > 1){
+						$(this).parent().children('.minutes').focus();
+					}
+				});
+
+
+
+				$(document).on('click','.time-up,.time-down',function(){
+					var order = $(this).attr('order');
+					var nDate = new Date();
+					var parent = $(this).parent().parent();
+
+					if(order == 1){
+						$(this).parent().parent().find('.time-start.hours').css('border-color','#bababa');
+						$(this).parent().parent().find('.time-start.minutes').css('border-color','#bababa');
+					} else {
+						$(this).parent().parent().find('.time-end.hours').css('border-color','#bababa');
+						$(this).parent().parent().find('.time-end.minutes').css('border-color','#bababa');
+					}
+
+					if(validateTime($(parent).children('span').children('input.hours[order = ' + order + ']').val() + ':' + $(parent).children('span').children('input.minutes[order = ' + order + ']').val())){
+						var time = parseTime($(parent).children('span').children('input.hours[order = ' + order + ']').val() + ':' + $(parent).children('span').children('input.minutes[order = ' + order + ']').val());
+					} else {
+						if(order == 1){
+							var time = parseTime(default_time_from);
+						} else {
+							var time = parseTime(default_time_to);
+						}
+					}
+					nDate.setHours(time.hh);
+					nDate.setMinutes(time.mm);
+					if($(this).hasClass('time-up')){
+						nDate.setMinutes(nDate.getMinutes() + 5);
+					} else {
+						nDate.setMinutes(nDate.getMinutes() - 5);
+					}
+
+					var nDateStr = '';
+					if(nDate.getHours() < 10) {
+						nDateStr = '0';
+					}
+					nDateStr = nDateStr + nDate.getHours() + ':';
+					if(nDate.getMinutes() < 10){
+						nDateStr = nDateStr + '0';
+					}
+					nDateStr = nDateStr + nDate.getMinutes();
+					hm = parseTime(nDateStr);
+
+					$(parent).children('span').children('input.hours[order = ' + order + ']').val(hm.hh);
+					$(parent).children('span').children('input.minutes[order = ' + order + ']').val(hm.mm);
+				});
+
+				$(document).on('click','input.lesson-not-regular',function(){
+					var parent = $(this).parent().parent().parent();
+					if($(this).is(':checked')){
+						$(parent).children('div.lesson-not-regular').show();
+					} else {
+						$(parent).children('div.lesson-not-regular').hide();
+					}
+				});
+
+                $("input[type='checkbox'].lesson-not-regular").on('change.validation', function () {
+                    $(this).parent("div").css('color', '#1d242e');
+                });
+
+                $('div.lesson-not-regular').find('input[type="radio"]').on('change.validation', function () {
+                    var orders = $(this).parents(".lesson-not-regular");
+                    orders.prev("div").children("div").css('color', '#1d242e');
+
+                    var dateStart = orders.find(".date-start");
+                    dateStart.css('border-color', '#bababa');
+
+                    var dateEnd = orders.find(".date-end");
+                    dateEnd.css('border-color', '#bababa');
+
+                    var dates = orders.find(".dates");
+                    dates.css('border-color', '#bababa');
+                });
+
+				$(document).on('click','input.some-groups',function(){
+					var parent = $(this).parent().parent().parent();
+					if($(this).is(':checked')){
+						$(parent).children('div.some-groups').show();
+					} else {
+						$(parent).children('div.some-groups').hide();
+					}
+				});
+
+				$(document).on('change','.class-lesson',function(){
+					if($(this).val() == "add"){
+						$(this).parent().find('option:first').attr('selected', 'selected');
+						context = this;
+						$('.popup-add-place-overlay').css('display', 'block');
+					}
+				});
+
+				$('.popup-add-place-overlay').click(function(event) {
+				    e = event || window.event
+				    if (e.target == this) {
+				        $('.popup-add-place-overlay').css('display', 'none')
+				    }
+				})
+
+				$('.btn-cancel-add').click(function() {
+				    $('.popup-add-place-overlay').css('display', 'none');
+				    $(this).parent().children('option:first').attr('selected', 'selected');
+				    return false;
+				})
+
+				$(document).on('click','input[type=radio]',function(){
+					var radio = $(this).parent().parent().parent();
+					radio.parent().find('input[type=radio]').attr('checked', false);
+					radio.parent().find('input[type=text],select').prop( "disabled", true );
+					radio.find('input[type=text],select').prop( "disabled", false );
+					radio.parent().css('color', '#bababa');;
+					$(this).prop('checked', true);
+				});
+
+				$(document).on('click','.btn-add-lesson',function(){
+					var time = "";
+					var minutes = 15;
+					var parent = $(this).parent().parent().parent();
+					var numLessons = parent.attr('lessons');
+					var html = $(this).parent().parent().parent().children('.wrap-raspisanie:last').clone();
+					parent.attr('lessons',Number(numLessons) + 1);
+					html.find('.checkbox').attr('checked', false);
+					html.find('.teacher-lesson-input').val('');
+					html.find('.teacher-lesson-input').attr('placeholder','Чапаев Василий Иванович');
+					html.find('#name-lesson').val('');
+					html.find('#name-lesson').attr('placeholder','Компьютерные технологии');
+					html.find('.extra-groups').val('');
+					html.find('.dates').val('');
+					html.find('select :selected').removeAttr('selected');
+					html.children('div.some-groups,div.lesson-not-regular').hide();
+					if($(this).hasClass('btn-add-next-lesson-bg')){
+						if((html.find('.time-end.hours').val() != undefined) && (html.find('.time-end.hours').val() != '')){
+							time = parseTime(plusTime(html.find('.time-end.hours').val() + ':' + html.find('.time-end.minutes').val(), minutes));
+							html.find('.time-start.hours').val(time.hh);
+							html.find('.time-start.minutes').val(time.mm);
+							time = parseTime(plusTime(html.find('.time-start.hours').val() + ':' + html.find('.time-start.minutes').val(), 90));
+							html.find('.time-end.hours').val(time.hh);
+							html.find('.time-end.minutes').val(time.mm);
+						} else {
+							html.find('.hours').val('');
+							html.find('.minutes').val('');
+						}
+					} else {
+						time = html.find('.time-start.hours').val();
+
+						html.find('.time-start.hours').val(time);
+						time = html.find('.time-start.minutes').val();
+						html.find('.time-start.minutes').val(time);
+						time = html.find('.time-end.hours').val();
+						html.find('.time-end.hours').val(time);
+						time = html.find('.time-end.minutes').val();
+						html.find('.time-end.minutes').val(time);
+					}
+
+
+					html.find('.dates,.date-start,.date-end').attr('id','');
+					html.find('.dates,.date-start,.date-end').val('');
+
+					html.find('.dates').removeClass('hasDatepicker');
+
+					html.find('.dates').multiDatesPicker({
+						dateFormat  : 'dd.mm.yy',
+                        onSelect: function () {
+                            $(this).css('border-color', '#bababa');
+                        }
+					});
+
+					html.find('.date-start,.date-end').removeClass('hasDatepicker');
+					html.find('.date-start,.date-end').datepicker({
+						defaultDate: "+1w",
+					    changeMonth: true,
+					    dateFormat: "dd.mm.yy",
+					    onSelect: function(selectedDate){
+                            $(this).css('border-color', '#bababa');
+
+					    	if(this.className.indexOf("date-start") < 0){
+					    		var option = "maxDate";
+					    		var cls = ".date-start";
+					    	} else {
+					    		var option = "minDate";
+					    		var cls = ".date-end";
+					    	}
+					        instance = $( this ).data( "datepicker" ),
+					        date = $.datepicker.parseDate(
+					        instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+					        selectedDate, instance.settings);
+					        $(this).parent().parent().find(cls).datepicker("option", option, date);
+					    }
+					});
+
+
+					html.find('.teacher-lesson-input').bind('textchange', function (event, previousText) {
+						var th = this;
+						$.getJSON('../api/v1/universities/' + get.univer + '/teachers', function(data){
+	    					var div = '<div class="autocomplete">';
+	    					var first = 1;
+	    					var search = $(th).val();
+	    					search = search.toLowerCase();
+	    					$.each(data.data, function(key, val){
+	    						if (-1 < val.teacher_name.toLowerCase().indexOf(search)) {
+	    							if(first == 1){
+	    								div += '<div class="form-input form-text input-long autocomplete-item">' + val.teacher_name + '</div>';
+	    								first = 0;
+	    							} else {
+	    								div += '<div class="form-input form-text input-long autocomplete-item" style="border-top: 0px;">' + val.teacher_name + '</div>';
+	    							}
+	    						}
+	    					});
+	    					div += '</div>';
+	    					$('.autocomplete').remove();
+	    					if(first == 0 && search != ""){
+	    						$(th).parent().append(div);
+	    					}
+	    				});
+
+					});
+					html.find('.teacher-lesson-input').blur(function(){
+						$('.autocomplete').remove();
+					});
+					html.find('.class-lesson').empty().append(refreshAuditories());
+					$(this).parent().parent().before(html);
+					if(numLessons == 1){
+						html.append('<div class="row" style="margin-top: 15px;"><div class="col center delete-lesson"><a href="#" style="color: #0079ff; font-size: 13px;">Удалить занятие</a></div></div>');
+					}
+					return false;
+				});
+
+				$(document).on('focus', '.form-text', function(){
+				    $(this).css('font-style', 'normal');
+				});
+
+				$('#check-data').click(function(){
+				    buildTable(buildForTable());
+				    //$('.popup-raspisanie-overlay').css('display', 'block');
+				    //$('body').css('overflow','hidden');
+				    return false;
+				});
+
+				$('.popup-raspisanie-overlay').click(function(event) {
+				    e = event || window.event;
+				    if (e.target == this) {
+				        $('.popup-raspisanie-overlay').css('display', 'none');
+				        $('body').css('overflow','y-scroll');
+				    }
+				});
+
+				$('.added-email-overlay').click(function(event) {
+				    e = event || window.event;
+				    if (e.target == this) {
+				        $(this).css('display', 'none');
+				        $('body').css('overflow','y-scroll');
+				    }
+                });
+
+				$(document).on('click', '.btn-cancel-table', function(){
+					$('.popup-raspisanie-overlay').css('display', 'none');
+					$('.added-email-overlay').css('display', 'none');
+				    $('body').css('overflow','y-scroll');
+				});
+
+				$(document).on('click', '.btn-edit-table', function(){
+
+				    var id_day = $(this).attr('id_day');
+
+				    $('div.lesson_edit')
+				    .empty()
+				    .css( { 'min-height': '100px' } );
+
+				    var td = $(this).closest('td');
+				    var td2 = td.prev('td');
+
+				    td.remove();
+				    td2
+				    .removeClass('col-time table-time')
+				    .attr( 'colspan', '2' )
+				    .html( '<div class="lesson_edit" style="min-height: 100px;"></div>' );
+
+				    $( 'div', td2 )
+				    .animate( {
+					    'min-height': '260px'
+					},
+					500,
+					function(){
+
+					    $('#addLessonForm')
+					    .clone(true)
+					    .appendTo( $( 'div.lesson_edit', td2 ) )
+					    .attr( { 'id': 'addLessonForm' + id_day } )
+					    .fadeIn();
+
+					}
+				    );
+
+				    //$.scrollTo('.day_' + id_day, 1500);
+				    return false;
+				});
+
+				$('.email-submit').click(function(e){
+                    var email = $('#email');
+
+                    if(!validateEmail(email.val())){
+                        email.css('border-color','#ff0000');
+                        e.preventDefault();
+                        return;
+                    } else {
+                        email.css('border-color','#bababa');
+                    }
+
+                    buildForSend(e);
+				});
+
+		$('.sendJSON').click(function(e){
+                    var isValidForm = true;
+
+                    var group_name = $('#group_name');
+
+                    if(!group_name.val()){
+                        group_name.css('border-color','#ff0000');
+                        $(".popup-raspisanie-overlay").css('display', 'none');
+                        $('body').css('overflow','y-scroll');
+                        isValidForm = false;
+                    } else {
+                        group_name.css('border-color','#bababa');
+                    }
+
+                    $('.time-start.hours').each(function () {
+
+                    	val = $(this).parent().children('.minutes').val();
+                    	if ($(this).val() == undefined || $(this).val() == '') {
+                        	if (val == undefined || val == '') {
+                        		$(this).css('border-color','#bababa');
+                        		return;
+                        	} else {
+                        		$(this).css('border-color','#ff0000');
+                                isValidForm = false;
+                                return;
+                        	}
+                    	}
+
+                   		if (/\D/g.test($(this).val()) || validateHours($(this).val()) == false) {
+                   			$(this).css('border-color','#ff0000');
+                            isValidForm = false;
+                   		} else {
+   							$(this).css('border-color','#bababa');
+                   		}
+                    });
+                    $('.time-start.minutes').each(function () {
+                    	val = $(this).parent().children('.hours').val();
+                    	if ($(this).val() == undefined || $(this).val() == '') {
+                        	if (val == undefined || val == '') {
+                        		$(this).css('border-color','#bababa');
+                        		return;
+                        	} else {
+                       			$(this).css('border-color','#ff0000');
+                                isValidForm = false;
+                                return;
+                        	}
+                    	}
+
+                    	if (/\D/g.test($(this).val()) || validateMinutes($(this).val()) == false) {
+                   			$(this).css('border-color','#ff0000');
+                            isValidForm = false;
+                   		} else {
+   							$(this).css('border-color','#bababa');
+                   		}
+                    });
+                    $('.time-end.hours').each(function () {
+                    	val = $(this).parent().children('.minutes').val();
+                    	if ($(this).val() == undefined || $(this).val() == '') {
+                        	if (val == undefined || val == '') {
+                        		$(this).css('border-color','#bababa');
+                        		return;
+                        	} else {
+                       			$(this).css('border-color','#ff0000');
+                                isValidForm = false;
+                                return;
+                        	}
+                    	}
+
+                    	if (/\D/g.test($(this).val()) || validateHours($(this).val()) == false) {
+                   			$(this).css('border-color','#ff0000');
+                            isValidForm = false;
+                   		} else {
+   							$(this).css('border-color','#bababa');
+                   		}
+                    });
+                    $('.time-end.minutes').each(function () {
+                    	val = $(this).parent().children('.hours').val();
+                    	if ($(this).val() == undefined || $(this).val() == '') {
+                        	if (val == undefined || val == '') {
+                        		$(this).css('border-color','#bababa');
+                        		return;
+                        	} else {
+                       			$(this).css('border-color','#ff0000');
+                                isValidForm = false;
+                                return;
+                        	}
+                    	}
+
+                    	if (/\D/g.test($(this).val()) || validateMinutes($(this).val()) == false) {
+                   			$(this).css('border-color','#ff0000');
+                            isValidForm = false;
+                            return;
+                   		} else {
+   							$(this).css('border-color','#bababa');
+                   		}
+
+                   		//html.find('.time-end.hours').val() + ':' + html.find('.time-end.minutes').val()
+                   		//alert($(this).val() + ':' + val);
+                   		//alert(val + ':' + $(this).val());
+
+                   		starth = $(this).parent().parent().find('.time-start.hours');
+                   		startm = $(this).parent().parent().find('.time-start.minutes');
+                   		endh = $(this).parent().parent().find('.time-end.hours');
+                   		endm = $(this).parent().parent().find('.time-end.minutes');
+
+                   		$(this).parent().parent().parent().find('.popup-alert').css('display','none');
+                   		if (validateTimes(starth.val() + ':' + startm.val(), endh.val() + ':' + endm.val())) {
+                   			isValidForm = false;
+                   			$(this).parent().parent().parent().find('.popup-alert').css('display','block');
+                   			//alert(starth.val() + ':' + startm.val() + '|' + endh.val() + ':' + endm.val());
+                   		}
+
+                    });
+
+                    var checkboxes = $("input[type='checkbox'].lesson-not-regular");
+                    checkboxes.each(function (i, checkbox) {
+                        if ($(checkbox).is(":checked")) {
+                            var orders = $(checkbox).parent(".col").parent(".row").next(".lesson-not-regular");
+                            var isOrder1Checked = orders.find("input[order='1']").is(":checked");
+                            var isOrder2Checked = orders.find("input[order='2']").is(":checked");
+                            var isOrder3Checked = orders.find("input[order='3']").is(":checked");
+                            if (!isOrder1Checked && !isOrder2Checked && !isOrder3Checked) {
+                                $(checkbox).parent("div").css('color', '#ff0000');
+                                isValidForm = false;
+                            } else {
+                                $(checkbox).parent("div").css('color', '#1d242e');
+                                if (isOrder2Checked) {
+                                    var dateStart = orders.find(".date-start");
+                                    if (dateStart.val() === "") {
+                                        dateStart.css('border-color', '#ff0000');
+                                        isValidForm = false;
+                                    } else {
+                						if(testDate(dateStart.val()) == false) {
+                							dateStart.css('border-color','#ff0000');
+                							isValidForm = false;
+                						} else {
+                							dateStart.css('border-color','#bababa');
+                						}
+                                    	//dateStart.css('border-color', '#bababa');
+                                    }
+
+                                    var dateEnd = orders.find(".date-end");
+                                    if (dateEnd.val() === "") {
+                                        dateEnd.css('border-color', '#ff0000');
+                                        isValidForm = false;
+                                    } else {
+                						if(testDate(dateEnd.val()) == false) {
+                							dateEnd.css('border-color','#ff0000');
+                							isValidForm = false;
+                						} else {
+                							dateEnd.css('border-color','#bababa');
+                						}
+                                    	//dateEnd.css('border-color', '#bababa');
+                                    }
+
+
+
+                                    var datesErr = orders.find(".popup-alert");
+                                    datesErr.css('display','none');
+                					if(isValidForm == true && dateStart.val() != '' && dateEnd.val() != '' && $.datepicker.parseDate( "dd.mm.yy", dateStart.val()) > $.datepicker.parseDate( "dd.mm.yy", dateEnd.val())){
+                						dateStart.css('border-color','#ff0000');
+                						dateEnd.css('border-color','#ff0000');
+                						datesErr.css('display','block');
+                						isValidForm = false;
+                					}
+
+                                }
+                                if (isOrder3Checked) {
+                                    var dates = orders.find(".dates");
+                                    if (dates.val() === "") {
+                                        dates.css('border-color', '#ff0000');
+                                        isValidForm = false;
+                                    } else {
+                                    	var dts = dates.val().split(",");
+                                    	var isValidDates = true;
+                                    	$.each( dts, function( i, val ) {
+                                    		  if (testDate(trim(val)) == false) {
+                                                  dates.css('border-color', '#ff0000');
+                                                  isValidDates = false;
+                                    		  }
+                                    	});
+                                    	if (isValidDates == true) {
+                                    		dates.css('border-color', '#bababa');
+                                    	} else {
+                                    		isValidForm = false;
+                                    	}
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    if (isValidForm) {
+                        $(".added-email-overlay").show();
+                        $('body').css('overflow','hidden');
+                    }
+				});
+
+				$('.form-input').focus(function(){
+					$(this).attr('placeholder','');
+				});
+
+				$('.dates').multiDatesPicker({
+					dateFormat  : 'dd.mm.yy',
+                    onSelect: function () {
+                        $(this).css('border-color', '#bababa');
+                    }
+				});
+
+				$('.date-start,.date-end').datepicker({
+					defaultDate: "+1w",
+				    changeMonth: true,
+				    dateFormat: "dd.mm.yy",
+				    onSelect: function(selectedDate){
+                        $(this).css('border-color', '#bababa');
+
+				    	if(this.className.indexOf("date-start") < 0){
+				    		var option = "maxDate";
+				    		var cls = ".date-start";
+				    	} else {
+				    		var option = "minDate";
+				    		var cls = ".date-end";
+				    	}
+				        instance = $( this ).data( "datepicker" ),
+				        date = $.datepicker.parseDate(
+				        instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+				        selectedDate, instance.settings);
+				        $(this).parent().parent().find(cls).datepicker("option", option, date);
+				    }
+				});
+
+                $(document).on('mouseover', '.table-lesson',function(){
+                    $(this).children('.lesson-overlay').css('display', 'table-cell');
+                });
+
+                $(document).on('mouseout', '.table-lesson',function(){
+                	$(this).children('.lesson-overlay').css('display', 'none');
+                });
+
+
+                $('#addPlace').click(function(){
+                	var nPl = $('#number-place').val();
+					if($('#street-place').val() != ''){
+						var adPl = 'ул.' + $('#street-place').val();
+						if($('#house-place').val() != ''){
+							adPl += ', д. ' + $('#house-place').val();
+						}
+						if($('#corpus-place').val() != ''){
+							adPl += ', корп. ' + $('#corpus-place').val();
+						}
+						if($('#build-place').val() != ''){
+							adPl += ', стр. ' + $('#build-place').val();
+						}
+						if($('#name-place').val() != ''){
+							adPl += ', ' + $('#name-place').val();
+						}
+					} else {
+						var adPl = null;
+					}
+
+
+					tmp = '<option adress="' + adPl + '" value="' + nPl + '">' + nPl + '</option>';
+					audTitle[audTitle.length] = nPl;
+					audAdress[audAdress.length] = adPl;
+					$('.class-lesson').append(tmp);
+
+                	$('.popup-add-place-overlay').css('display', 'none');
+				   	$(context).children('option:last').attr('selected', 'selected');
+				   	$('.popup-add-place input').val('');
+				    $('#street-place').attr('placeholder', 'ул. Ленина');
+				    $('#number-place').attr('placeholder', '17');
+				    $('#house-place').attr('placeholder', '4');
+				    $('#corpus-place').attr('placeholder', '2');
+				    $('#build-place').attr('placeholder', '2A');
+				    $('#name-place').attr('placeholder', 'Дом на Ленинке');
+
+				    return false;
+                });
+
+                $(document).on('click', '.delete-lesson',function(){
+                	var wrap = $(this).parent().parent();
+                	wrap.parent().attr('lessons', wrap.parent().attr('lessons') - 1);
+                	wrap.remove();
+                	return false;
+                });
+
+
+                $('.time-start.hours').each(function () {
+                	$(this).bind('textchange', function (event, previousText) {
+                		$(this).parent().parent().parent().find('.popup-alert').css('display','none');
+                		if (/\D/g.test($(this).val())) {
+                			$(this).val($(this).val().replace(/\D/g,''));
+                		} else if (validateHours($(this).val()) == false) {
+                			$(this).css('border-color','#ff0000');
+                		} else {
+							$(this).css('border-color','#bababa');
+                		}
+                	});
+                });
+                $('.time-start.minutes').each(function () {
+                	$(this).bind('textchange', function (event, previousText) {
+                		$(this).parent().parent().parent().find('.popup-alert').css('display','none');
+                		if (/\D/g.test($(this).val())) {
+                			$(this).val($(this).val().replace(/\D/g,''));
+                		} else if (validateMinutes($(this).val()) == false) {
+                			$(this).css('border-color','#ff0000');
+                		} else {
+							$(this).css('border-color','#bababa');
+                		}
+                	});
+                });
+                $('.time-end.hours').each(function () {
+                	$(this).bind('textchange', function (event, previousText) {
+                		$(this).parent().parent().parent().find('.popup-alert').css('display','none');
+                		if (/\D/g.test($(this).val())) {
+                			$(this).val($(this).val().replace(/\D/g,''));
+                		} else if (validateHours($(this).val()) == false) {
+                			$(this).css('border-color','#ff0000');
+                		} else {
+							$(this).css('border-color','#bababa');
+                		}
+                	});
+                });
+                $('.time-end.minutes').each(function () {
+                	$(this).bind('textchange', function (event, previousText) {
+                		$(this).parent().parent().parent().find('.popup-alert').css('display','none');
+                		if (/\D/g.test($(this).val())) {
+                			$(this).val($(this).val().replace(/\D/g,''));
+                		} else if (validateMinutes($(this).val()) == false) {
+                			$(this).css('border-color','#ff0000');
+                		} else {
+							$(this).css('border-color','#bababa');
+                		}
+                	});
+                });
+			});
+		</script>
+	</head>
+	<body style="/*noinspection CssInvalidElement*/overflow: y-scroll">
+		 <div class="header">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
+			<ul class="header__menu">
+				<li class="is_active" ><a href="step1.html">Добавить расписание</a></li>
+				<li><a href="../second.html">Университетам</a></li>
+				<li><a href="../third.html">Обратная связь</a></li>
+			</ul>
+			<div class="socio">
+				<a href="http://vk.com/rvuzov"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov"><i class="tw"></i></a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+		 <div class="clear" id="main">
+		 	<div class="wrapper">
+			 	<div id="headline">
+			 		<a class="btn-step arrow-left float-left" id="btn-step2" href="step1.html">Назад</a>
+			 		<div class="float-left headline-title-text" id="headline-title">Добавить расписание</div>
+			 	</div>
+			 	<div class="clear" id="wrapper-form">
+
+				    <div class="row clear">
+					<div class="col">
+					    <label style="padding-top: 9px;">Название группы</label>
+					</div>
+					<div class="col right">
+					    <input class="form-input form-text input-normal" id="group_name" placeholder="Например ДЛД-401...">
+					</div>
+				    </div>
+				    <div class="row clear">
+					<div class="col right tip">
+					    Название группы должно включать в себя номер курса.
+					</div>
+				    </div>
+
+				    <!--div class="popup-raspisanie-overlay"-->
+					    <div class="popup-raspisanie">
+						<div class="headline-title-text popup-headline"><!-- Расписание --></div>
+						<div style="margin-top: 10px; " >
+						    <div class="float-left">
+							<div style="font-family: 'Helvetica-Medium'; font-size: 14px; text-align: left; color: #000;">Обозначения</div>
+							<div style="background: url('image/mark.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+							    – занятия идут в определённые даты или в определённый промежуток.
+							</div>
+							<div style="background: url('image/1.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+							    – занятия идут по нечётным неделям. (раз в две недели)
+							</div>
+							<div style="background: url('image/2.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+							    – занятия идут по чётным неделям. (раз в две недели)
+							</div>
+						    </div>
+						    <div class="float-right " style="height: 45px; margin-top: 64px;">
+							<div style="width: 137px; height: 45px; padding-top: 11px;" class="btn-save float-left">
+							    <a href="#" class="email-submit sendJSON" style="font-size: 16px;">Сохранить</a>
+							</div>
+							<div class="float-right" style="width: 380px; height: 45px; /*border-left: 1px #bababa solid;*/ padding-top: 17px;">
+							    <!--a class="btn-back-to-edit btn-cancel-table" href="#">
+								Вернуться к редактированию
+							    </a>
+							    <div></div-->
+							</div>
+						    </div>
+						</div>
+					    </div>
+				    <!--/div-->
+
+
+				    <div id="addLessonForm" class="wrap-raspisanie" style="display:none; padding-top: 20px;">
+					    <div class="row clear">
+						    <div class="col">
+							    <label style="padding-top: 9px;">Занятие</label>
+						    </div>
+						    <div class="col right">
+							    <span class="float-left">
+								    <span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+							    </span>
+							    <div class="timepicker float-left">
+								    <div class="time-up" order="1"><img src="image/time-up.png"></div>
+								    <div class="time-down" order="1"><img src="image/time-down.png"></div>
+							    </div>
+							    <span class="float-left" style="margin-left: 14px;">
+								    <span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+							    </span>
+							    <div class="timepicker float-left">
+								    <div class="time-up" order="2"><img src="image/time-up.png"></div>
+								    <div class="time-down" order="2"><img src="image/time-down.png"></div>
+							    </div>
+						    </div>
+						    <div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					    </div>
+					    <div class="row clear" style="margin-top: 30px;">
+						    <div class="col">
+							    <label style="padding-top: 9px;">Название предмета</label>
+						    </div>
+						    <div class="col right">
+							    <input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+						    </div>
+					    </div>
+					    <div class="row clear" style="margin-top: 12px;">
+						    <div class="col">
+							    <label style="padding-top: 9px;">Тип занятия</label>
+						    </div>
+						    <div class="col right">
+							    <select class="lesson-type">
+								    <option value="5">Внеучебное занятие</option>
+								    <option value="6">Зачет</option>
+								    <option value="4">Консультация</option>
+								    <option value="1">Лабораторная работа</option>
+								    <option value="2">Лекция</option>
+								    <option value="0">Практическое занятие</option>
+								    <option value="8">Самостоятельная работа студента</option>
+								    <option value="3">Семинар</option>
+								    <option value="7">Экзамен</option>
+							    </select>
+						    </div>
+					    </div>
+					    <div class="row clear" style="margin-top: 12px;">
+						    <div class="col">
+							    <label style="padding-top: 9px;">Преподаватель</label>
+						    </div>
+						    <div class="col right">
+							    <input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+						    </div>
+					    </div>
+					    <div class="row clear" style="margin-top: 12px;">
+						    <div class="col">
+							    <label style="padding-top: 9px;">Аудитория</label>
+						    </div>
+						    <div class="col right">
+							    <select class="class-lesson">
+								    <option>Выберите аудиторию...</option>
+								    <option value="add">Добавить аудиторию</option>
+							    </select>
+						    </div>
+					    </div>
+					    <div class="row clear" style="margin-top: 20px;">
+						    <div class="col right">
+							    <input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+						    </div>
+					    </div>
+					    <div class="lesson-not-regular">
+						    <div class="row clear" style="margin-top: 12px;">
+							    <div class="col">
+								    <label><input type="radio" order="1"> Раз в две недели</label>
+							    </div>
+							    <div class="col right">
+								    <select disabled>
+									    <option value="1">Нечетная/первая/верхняя</option>
+									    <option value="2">Четная/вторая/нижняя</option>
+								    </select>
+							    </div>
+						    </div>
+						    <div class="row clear" style="margin-top: 12px;">
+							    <div class="col">
+								    <label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+							    </div>
+							    <div class="col right">
+								    <span class="float-left">
+									    <span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+								    </span>
+								    <span class="float-left" style="margin-left: 14px;">
+									    <span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+								    </span>
+							    </div>
+						    </div>
+						    <div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						    <div class="row clear" style="margin-top: 13px;">
+							    <div class="col">
+								    <label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+							    </div>
+							    <div class="col right">
+								    <input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+							    </div>
+						    </div>
+					    </div>
+					    <div class="row clear" style="margin-top: 35px; display:none;">
+						    <div class="col center">
+							    <input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+						    </div>
+					    </div>
+					    <div class="some-groups" style="display: none;">
+						    <div class="row clear" style="margin-top: 30px;">
+							    <div class="col">
+								    <label style="padding-top: 9px;">Названия групп</label>
+							    </div>
+							    <div class="col right">
+								    <input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+							    </div>
+						    </div>
+						    <div class="row clear">
+							    <div class="col right tip">
+								    Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+							    </div>
+						    </div>
+					    </div>
+
+					    <div class="row clear">
+						<div class="col right">
+						    <div class="btn-save float-left" style="width: 137px; height: 45px; padding-top: 11px;">
+							<a style="font-size: 16px;" class="email-submit sendJSON" href="#">Сохранить</a>
+						    </div>
+						</div>
+					    </div>
+
+				    </div>
+
+
+				    <div  style="display:none;">
+
+			 		<div class="row clear week day_1">
+			 			<div class="col">
+			 				<label class="day-week">Понедельник</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="1"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="1" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+				 				<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_2">
+			 			<div class="col">
+			 				<label class="day-week">Вторник</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="2"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="2" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_3">
+			 			<div class="col">
+			 				<label class="day-week">Среда</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="3"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="3" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_4">
+			 			<div class="col">
+			 				<label class="day-week">Четверг</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="4"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="4" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_5">
+			 			<div class="col">
+			 				<label class="day-week">Пятница</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="5"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="5" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_6">
+			 			<div class="col">
+			 				<label class="day-week">Суббота</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="6"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="6" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear week day_7">
+			 			<div class="col">
+			 				<label class="day-week">Воскресенье</label>
+			 			</div>
+			 			<div class="col right">
+			 				<a class="btn-slide down" href="#" id-day="7"><span class="underline-border">развернуть</span></a>
+			 			</div>
+			 		</div>
+			 		<div day="7" class="wrapper-day" lessons="1">
+			 			<div class="wrap-raspisanie">
+					 		<div class="row clear" style="margin-top: 42px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Занятие</label>
+					 			</div>
+					 			<div class="col right">
+					 				<span class="float-left">
+					 					<span style="margin-right: 8px;">с</span> <input class="form-input form-text input-small time-start hours" order="1" maxlength="2"> : <input class="form-input form-text input-small time-start minutes" order="1" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="1"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="1"><img src="image/time-down.png"></div>
+					 				</div>
+					 				<span class="float-left" style="margin-left: 14px;">
+					 					<span style="margin-right: 13px;">по</span> <input class="form-input form-text input-small time-end hours" order="2" maxlength="2"> : <input class="form-input form-text input-small time-end minutes" order="2" maxlength="2">
+					 				</span>
+					 				<div class="timepicker float-left">
+					 					<div class="time-up" order="2"><img src="image/time-up.png"></div>
+					 					<div class="time-down" order="2"><img src="image/time-down.png"></div>
+					 				</div>
+					 			</div>
+					 			<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 30px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Название предмета</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long" placeholder="Компьютерные технологии" id="name-lesson">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Тип занятия</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="lesson-type">
+					 					<option value="5">Внеучебное занятие</option>
+					 					<option value="6">Зачет</option>
+					 					<option value="4">Консультация</option>
+										<option value="1">Лабораторная работа</option>
+					 					<option value="2">Лекция</option>
+					 					<option value="0">Практическое занятие</option>
+					 					<option value="8">Самостоятельная работа студента</option>
+					 					<option value="3">Семинар</option>
+					 					<option value="7">Экзамен</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Преподаватель</label>
+					 			</div>
+					 			<div class="col right">
+					 				<input class="form-input form-text input-long teacher-lesson-input" placeholder="Чапаев Василий Иванович">
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 12px;">
+					 			<div class="col">
+					 				<label style="padding-top: 9px;">Аудитория</label>
+					 			</div>
+					 			<div class="col right">
+					 				<select class="class-lesson">
+					 					<option>Выберите аудиторию...</option>
+					 					<option value="add">Добавить аудиторию</option>
+					 				</select>
+					 			</div>
+					 		</div>
+					 		<div class="row clear" style="margin-top: 40px;">
+					 			<div class="col center">
+					 				<input class="checkbox lesson-not-regular" type="checkbox" > Занятия проходят не каждую неделю
+					 			</div>
+					 		</div>
+					 		<div class="lesson-not-regular">
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label><input type="radio" order="1"> Раз в две недели</label>
+						 			</div>
+						 			<div class="col right">
+						 				<select disabled>
+						 					<option value="1">Нечетная/первая/верхняя</option>
+						 					<option value="2">Четная/вторая/нижняя</option>
+						 				</select>
+						 			</div>
+						 		</div>
+						 		<div class="row clear" style="margin-top: 12px;">
+						 			<div class="col">
+						 				<label style="margin-right: 62px;"><input type="radio" order="2"> Диапазон дат</label>
+						 			</div>
+						 			<div class="col right">
+						 				<span class="float-left">
+					 						<span style="margin-right: 8px;">с</span> <input type="text" class="form-input form-text date-start" style="width: 80px;" disabled>
+					 					</span>
+					 					<span class="float-left" style="margin-left: 14px;">
+					 						<span style="margin-right: 13px;">по</span> <input type="text" class="form-input form-text date-end" style="width: 80px;" disabled>
+					 					</span>
+						 			</div>
+						 		</div>
+								<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+						 		<div class="row clear" style="margin-top: 13px;">
+						 			<div class="col">
+						 				<label style="margin-right: 14px;"><input type="radio" order="3"> Определенные даты</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+						 			</div>
+						 		</div>
+						 	</div>
+					 		<div class="row clear" style="margin-top: 35px; display:none;">
+					 			<div class="col center">
+					 				<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+					 			</div>
+					 		</div>
+					 		<div class="some-groups" style="display: none;">
+						 		<div class="row clear" style="margin-top: 30px;">
+						 			<div class="col">
+						 				<label style="padding-top: 9px;">Названия групп</label>
+						 			</div>
+						 			<div class="col right">
+						 				<input class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+						 			</div>
+						 		</div>
+						 		<div class="row clear">
+						 			<div class="col right tip">
+						 				Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+						 			</div>
+						 		</div>
+						 	</div>
+						</div>
+				 		<div class="row clear btns-add" style="margin-top: 30px;">
+				 			<div class="col">
+				 				<div class="btn-add-lesson btn-add-next-lesson-bg float-right">
+				 					<a href="#">Добавить следующее занятие</a>
+				 				</div>
+				 			</div>
+				 			<div class="col right">
+				 				<div class="btn-add-lesson btn-add-lesson-bg">
+				 					<a href="#">Добавить еще занятие на это же время</a>
+				 				</div>
+				 			</div>
+				 		</div>
+				 		<div class="row clear" style="margin-top: 15px;">
+				 			<div class="hr"></div>
+				 		</div>
+				 	</div>
+			 		<div class="row clear" style="margin-top: 30px; display: none;">
+			 			<div class="col">
+			 				<label style="padding-top: 9px;">Контактные данные</label>
+			 			</div>
+			 			<div class="col right">
+			 				<input class="form-input form-text input-long" placeholder="Введите адрес электронной почты или ссылку..." id="contacts">
+			 			</div>
+			 		</div>
+			 		<div class="row clear" style="display: none;">
+			 			<div class="col right tip clear">
+			 				<div style="width: 26px; float: left;"><img src="image/contact.png"></div>
+			 				<div style="width: 284px; float: right; padding-left: 10px;">Оставьте ссылку на страничку в социальных сетях или ваш e-mail, чтобы мы могли сообщить о публикации вашего расписания.</div>
+			 			</div>
+			 		</div>
+			 		<div class="row clear" style="margin-top: 30px;">
+			 			<div class="col">
+			 				<div class="btn-save float-right" style="border-right: 1px #bababa solid;  height: 50px; line-height:50px;">
+			 					<a href="#" class="sendJSON">Сохранить</a>
+			 				</div>
+			 			</div>
+			 			<div class="col right btn-next">
+							<a href="#" id="check-data">Просмотр расписания</a>
+			 			</div>
+			 		</div>
+			 		<div class="row clear">
+			 			<div class="hr"></div>
+			 		</div>
+
+				    </div>
+				    <!-- /display none -->
+
+			 	</div>
+		 	</div>
+		 </div>
+
+
+
+		 <div class="popup-add-place-overlay">
+			<div class="popup-add-place">
+				<div class="headline-title-text popup-headline">Добавить аудиторию</div>
+				<div class="row clear" style="margin-top: 21px;">
+		 			<div class="col" style="width: 197px;">
+		 				<label style="padding-top: 9px;">№ аудитории</label>
+		 			</div>
+		 			<div class="col right" style="width: 280px;">
+		 				<input class="form-input form-text input-medium" placeholder="17" id="number-place">
+		 			</div>
+		 		</div>
+		 		<div class="row clear" style="margin-top: 9px;">
+		 			<div class="col" style="width: 197px;">
+		 				<label style="padding-top: 9px;">Улица</label>
+		 			</div>
+		 			<div class="col right" style="width: 280px;">
+		 				<input class="form-input form-text input-popup" placeholder="ул. Ленина" id="street-place">
+		 			</div>
+		 		</div>
+		 		<div class="row clear" style="margin-top: 9px;">
+		 			<div class="col" style="width: 197px;">
+		 				<label style="padding-top: 9px;">Дом</label>
+		 			</div>
+		 			<div class="col right" style="width: 280px;">
+		 				<input class="form-input form-text input-xsmall" placeholder="4" id="house-place"> корп. <input class="form-input form-text input-xsmall" placeholder="2" id="corpus-place">	стр. <input class="form-input form-text input-xsmall" placeholder="2А" id="build-place">
+		 			</div>
+		 		</div>
+		 		<div class="row clear" style="margin-top: 9px;">
+		 			<div class="col" style="width: 197px;">
+		 				<label style="padding-top: 9px;">Название строения</label>
+		 			</div>
+		 			<div class="col right" style="width: 280px;">
+		 				<input class="form-input form-text input-popup" placeholder="Дом на Ленинке" id="name-place">
+		 			</div>
+		 		</div>
+		 		<div class="row clear" style="margin-top: 30px;">
+		 			<div class="col" style="width: 188px; margin-left: 50px;">
+		 				<div class="btn-save float-left">
+		 					<a href="#" id="addPlace" style="font-size: 14px;">Сохранить</a>
+		 				</div>
+		 			</div>
+		 			<div class="col right" style="width: 238px;; border-left: 1px #bababa solid">
+		 				 <div class="btn-cancel-add btn-cancel float-right">
+		 					<a href="#">Отменить</a>
+		 				</div>
+		 			</div>
+		 		</div>
+			</div>
+		</div>
+
+        <div class="added-email-overlay">
+            <div class="added-email">
+                <div class="headline-title-text popup-headline" style="margin-bottom: 15px;">Укажите email для обратной связи</div>
+                <div style="margin-top: 10px; " class="clear col">
+                    <span>email</span> <input class="form-input form-text input-normal" id="email" name="email" placeholder="user@raspisaniye-vuzov.ru">
+                    <div class="tip" style="text-align: right; width: auto; margin-right: 0px">
+                        Убедитесь, что email корректный
+                    </div>
+                    <div class="tip" id="sendform-error" style="text-align: right; width: auto; margin-right: 0px; color: #a1311f"></div>
+                    <div class="btn-save" style="margin: 0 auto;">
+                        <a href="#" class="email-submit sendJSON">Сохранить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Yandex.Metrika counter -->
+<!--
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21116644 = new Ya.Metrika({id:21116644,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21116644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+-->
+<!-- /Yandex.Metrika counter -->
+
+    </body>
+</html>
+

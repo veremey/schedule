@@ -1,0 +1,7 @@
+
+RewriteEngine on
+RewriteBase /api/
+#RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+
+RewriteRule ^(.*)$ http://newdev.raspisaniye-vuzov.ru/api/$1 [P]
+#RewriteRule ^(.*)$ http://raspisaniye-vuzov.ru/api/$1 [P]

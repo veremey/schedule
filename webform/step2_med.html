@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Расписание вузов - Добавление расписаниия</title>
+
+	<script src="/webform/js/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery-ui-1.10.4.custom.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery.textchange.min.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery.scrollTo.min.js"></script>
+	<script type="text/javascript" src="/webform/js/jquery-ui.multidatespicker.js"></script>
+	<script type="text/javascript" src="/js/mobile.js"></script>
+	<link rel="stylesheet" href="/webform/css/flick/jquery-ui-1.10.4.custom.css" type="text/css" />
+	<script src="http://www.google.com/recaptcha/api.js"></script>
+
+	<link rel="stylesheet" href="/webform/js/datetimepicker/jquery.datetimepicker.css" type="text/css" />
+	<script src="/webform/js/datetimepicker/jquery.datetimepicker.js"></script>
+
+	<link href="/webform/js/select2/select2.css" rel="stylesheet"/>
+	<script src="/webform/js/select2/select2.min.js"></script>
+	<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<link rel="stylesheet" media="all" href="../style/css/screen.css" >
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700,600&subset=cyrillic,latin' rel='stylesheet' type='text/css'>
+	<link href="/webform/js/autocomplete/jquery.autocomplete.css" rel="stylesheet"/>
+	<script src="/webform/js/autocomplete/jquery.autocomplete.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=17102014">
+
+	<script src="/webform/js/backbone/underscore-min.js"></script>
+	<script src="/webform/js/backbone/backbone-min.js"></script>
+	<script src="/webform/js/backbone/backbone.localStorage-min.js"></script>
+
+	<script src="/webform/js/controller_schedule.js?v=05022015"></script>
+	<script src="/webform/js/shedule_session.js?v=05022015"></script>
+	<script src="/webform/js/shedule_cycle.js?v=05022015"></script>
+	<script type="text/javascript">
+	    $(document).bind( 'ready', function(){
+		shedule.init();
+		app.init();
+	    });
+	</script>
+
+</head>
+<body style="/*noinspection CssInvalidElement*/overflow: y-scroll">
+	 <div class="header">
+		<div class="l_container">
+			<button class="btn__hiden-767"></button>
+			<ul class="header__menu">
+				<li class="is_active" ><a href="step1.html">Добавить расписание</a></li>
+				<li><a href="../second.html">Университетам</a></li>
+				<li><a href="../third.html">Обратная связь</a></li>
+			</ul>
+			<div class="socio">
+				<a href="http://vk.com/rvuzov"><i class="vk"></i></a>
+				<a href="https://www.facebook.com/rvuzov"><i class="f"></i></a>
+				<a href="https://twitter.com/rvuzov"><i class="tw"></i></a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	 <div id="main">
+		<div class="wrapper" id="lessonsapp">
+			<div id="headline">
+				<a class="btn-step arrow-left float-left" id="btn-step2" href="step1.html">Назад</a>
+				<div class="float-left headline-title-text" id="headline-title" style="margin-right: 170px;">Добавление/Изменение расписания</div>
+			</div>
+			<div class="clear" id="wrapper-form">
+
+				<div class="row clear">
+				<div class="col">
+				</div>
+				    <div class="col right">
+					<label>
+					    <input type="radio" name="shedule_type" value="1" />
+					    Семестр
+					</label>
+                                        <label>
+					    <input type="radio" name="shedule_type" value="2" checked="checked" />
+					    Семестр - Мед. ВУЗы
+					</label>
+					<label>
+					    <input type="radio" name="shedule_type" value="3" />
+					    Зачетная неделя/сессия/консультация
+					</label>
+				    </div>
+				</div>
+
+				<div id="dates">
+				    <div class="row clear" style="margin-top: 40px;">
+					<div class="col">
+					    <label>Дата начала семестра/модуля<font color="#e65049">*</font></label>
+					</div>
+					<div class="col right" style="position: relative;">
+					    <input type="text" class="form-input form-text input-normal date date-start">
+					    <div class="popup-alert">Неверный формат</div>
+					</div>
+				    </div>
+				    <div class="row clear" style="margin-top: 23px;">
+					<div class="col">
+					    <label>Дата окончания семестра/модуля<font color="#e65049">*</font></label>
+					</div>
+					<div class="col right" style="position: relative;">
+					    <input type="text" class="form-input form-text input-normal date date-end">
+					    <div class="popup-alert">Неверный формат</div>
+					</div>
+				    </div>
+				    <div class="row clear">
+					<div class="col right tip">
+					    <div id="dates-err" style="left: -50px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+					</div>
+				    </div>
+				    <div class="row clear">
+					<div class="col right tip">
+					    <font color="#e65049">*</font> Важно для определения нечётной (первой) недели учёбы. Первая неделя нечётная!
+					</div>
+				    </div>
+				</div>
+
+				<br />
+				<div class="row clear">
+				<div class="col">
+				</div>
+				    <div class="col right">
+					<a href="#" class="link-button bells-schedule" id="bells-schedule-button">Расписание звонков</a>
+					<div id="error_message" class="tip error-message"></div>
+				    </div>
+				</div>
+
+				<div class="popup-raspisanie">
+
+					<ul class="tabs" id="shedule_type">
+					    <li class="active"><a href="#" data-type="1">Лекции</a></li>
+					    <li><a href="#" data-type="2">Цикловые занятия</a></li>
+					</ul>
+
+					<div id="btn-new-shedule">
+					    <div>
+						<a href="#" class="btn btn-new"><span>Новое расписание</span></a>
+						<span style="display:none;">Вы уверены?&nbsp;</span>
+						<a href="#" class="btn btn-ok" title="Да" style="display:none;"></a>
+						<a href="#" class="btn btn-cancel" title="Отмена" style="display:none;"></a>
+					    </div>
+					</div>
+
+					<div class="shedule-table tabbed" id="sheduleTable">
+					    <table style="border: 1px #bababa solid; width: 100%;">
+						<colgroup>
+						    <col class="col1">
+						    <col class="col1">
+						    <col class="col1">
+						</colgroup>
+						<tbody>
+						    <tr class="lesson">
+							<td class="col-day"></td>
+							<td class="headline-table col-time table-head">
+							    Время
+							</td>
+							<td class="headline-table col-group table-head">
+							    Группа
+							    <span class="table-name-group">
+								Моя группа
+							    </span>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="1">
+							<td class="col-day">
+							    Понедельник
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="2">
+							<td class="col-day">
+								Вторник
+							</td>
+							<td class="col-time table-time">
+								-
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="3">
+							<td class="col-day">
+							    Среда
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="4">
+							<td class="col-day">
+							    Четверг
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="5">
+							<td class="col-day">
+							    Пятница
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="6">
+							<td class="col-day">
+							    Суббота
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" colspan="1" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+
+						    <tr class="lesson row-day" data-day="7">
+							<td class="col-day">
+							    Воскресенье
+							</td>
+							<td class="col-time table-time">
+							    -
+							</td>
+							<td style="border: 0px;" class="col-group cell-lesson-empty">
+							    <div class="cell-lesson-cont"></div>
+							</td>
+						    </tr>
+						</tbody>
+					    </table>
+					</div>
+
+					<div class="shedule-table tabbed" id="sheduleTable2" style="display:none;">
+					    <table>
+						<colgroup>
+						    <col width="20%">
+						    <col width="15%">
+						    <col width="15%">
+						    <col width="50%">
+						</colgroup>
+
+						<thead>
+						    <tr class="lesson">
+							<td class="headline-table table-head">
+							    Диапазон дат
+							</td>
+							<td class="headline-table table-head">
+							    Время
+							</td>
+							<td class="headline-table table-head">
+							    Аудитория
+							</td>
+							<td class="headline-table table-head">
+							    Занятие
+							</td>
+						    </tr>
+						</thead>
+						<tbody id="lessons-list" style="display:none;">
+
+						</tbody>
+						<tfoot>
+						    <tr class="lesson row-day">
+							<td colspan="4" class="text-center">
+							    <a href="#" class="link-button icn-add" id="button-add-lesson">Добавить занятие</a>
+							    <div class="add-lesson-session" id="add-lesson-container"></div>
+							</td>
+						    </tr>
+						</tfoot>
+					    </table>
+					</div>
+
+					<div style="margin-top: 10px; " >
+						<div class="float-left">
+							<div style="font-family: 'Helvetica-Medium'; font-size: 14px; text-align: left; color: #000;">Обозначения</div>
+							<div style="background: url('image/mark.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+								– занятия идут в определённые даты или в определённый промежуток.
+							</div>
+							<div style="background: url('image/1.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+								– занятия идут по нечётным неделям. (раз в две недели)
+							</div>
+							<div style="background: url('image/2.png') no-repeat; font-family: 'Helvetica-Italic'; font-size: 13px; width: 240px; margin-top: 10px; padding-left: 28px; text-align: left; color: #000;">
+								– занятия идут по чётным неделям. (раз в две недели)
+							</div>
+						</div>
+						<div class="float-right" style="height: 45px; margin-top: 64px;">
+							<div style="width: 137px; height: 45px; padding-top: 11px;" class="btn-save float-left">
+								<a href="#" class="sendJSON" style="font-size: 16px;">Отправить</a>
+							</div>
+							<div class="float-right" style="width: 380px; height: 45px; /*border-left: 1px #bababa solid;*/ padding-top: 17px;">
+								<!--a class="btn-back-to-edit btn-cancel-table" href="#">
+									Вернуться к редактированию
+								</a>
+								<div></div-->
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div id="addLessonForm" class="wrap-raspisanie" style="display:none;">
+					<div class="common_block">
+						<div class="row clear">
+							<div class="col">
+								<label style="padding-top: 9px;">Занятие</label>
+							</div>
+							<div class="col right">
+								<span class="float-left">
+									<span style="margin-right: 8px;">с</span>
+									<input type="text" class="form-input form-text input-small time-start timepicker" maxlength="5">
+								</span>
+								<span class="float-left" style="margin-left: 14px;">
+									<span style="margin-right: 13px;">по</span>
+									<input type="text" class="form-input form-text input-small time-end timepicker" maxlength="5">
+								</span>
+								<span class="float-left" style="margin-left: 14px;">
+									<label>
+										<input type="checkbox" name="skip_lesson" value="1" />
+										Окно
+									</label>
+								</span>
+							</div>
+							<div id="times-err" style="margin-left: 100px; position: relative; height: 30px;" class="col popup-alert">Время начала занятия позже времени окончания</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label style="padding-top: 9px;">Название предмета</label>
+							</div>
+							<div class="col right">
+								<input type="text" class="form-input form-text input-long name-lesson" _placeholder="Компьютерные технологии">
+							</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label style="padding-top: 9px;">Тип занятия</label>
+							</div>
+							<div class="col right">
+								<select class="lesson-type" style="width:280px;">
+
+								</select>
+							</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label style="padding-top: 9px;">Преподаватель</label>
+							</div>
+							<div class="col right">
+							    <!--input type="hidden" class="form-text input-long teacher-lesson-input" -->
+							    <!--select class="teacher-lesson-input" multiple="multiple" style="width:280px;">
+
+							    </select-->
+							    <input type="text" class="form-text input-long teacher-lesson-input">
+							</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label style="padding-top: 9px;">Аудитория</label>
+							</div>
+							<div class="col right">
+								<!--select class="class-lesson" style="width:280px;">
+									<option value="">Выберите аудиторию...</option>
+									<option value="add">+ Добавить аудиторию</option>
+								</select-->
+								<input type="hidden" class="form-text input-long class-lesson">
+							</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col right">
+								<label>
+									<input class="checkbox lesson-not-regular" type="checkbox" >
+									Занятия проходят не каждую неделю
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="lesson-not-regular">
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label><input type="checkbox" name="notregular1" data-order="1"> Раз в две недели</label>
+							</div>
+							<div class="col right">
+								<select name="parity_week" disabled>
+									<option value="1">Нечетная/первая/верхняя</option>
+									<option value="2">Четная/вторая/нижняя</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clear" style="margin-top: 12px;">
+							<div class="col">
+								<label style="margin-right: 62px;">
+									<input type="checkbox" name="notregular2" data-order="2">
+									Диапазон дат
+								</label>
+							</div>
+							<div class="col right">
+								<span class="float-left">
+									<span style="margin-right: 8px;">с</span>
+									<input type="text" class="form-input form-text date-start datepicker" style="width: 80px;" disabled>
+								</span>
+								<span class="float-left" style="margin-left: 14px;">
+									<span style="margin-right: 13px;">по</span>
+									<input type="text" class="form-input form-text date-end datepicker" style="width: 80px;" disabled>
+								</span>
+							</div>
+						</div>
+						<div id="dates-err" style="font-size: 14px; left: 120px; margin-bottom: 23px; position: relative;" class="popup-alert">Дата начала позже даты окончания</div>
+							<div class="row clear" style="margin-top: 13px;">
+								<div class="col">
+									<label style="margin-right: 14px;">
+										<input type="checkbox" name="notregular3" data-order="3">
+										Определенные даты
+									</label>
+								</div>
+								<div class="col right">
+									<input type="text" class="form-input form-text input-normal float-left dates" placeholder="Добавить дату" disabled>
+								</div>
+							</div>
+						</div>
+						<!--div class="row clear" style="margin-top: 35px; display:none;">
+							<div class="col center">
+								<input class="checkbox some-groups" type="checkbox"> Это занятие идет у нескольких групп
+							</div>
+						</div>
+						<div class="some-groups" style="display: none;">
+							<div class="row clear" style="margin-top: 30px;">
+								<div class="col">
+									<label style="padding-top: 9px;">Названия групп</label>
+								</div>
+								<div class="col right">
+									<input type="text" class="form-input form-text input-normal extra-groups" placeholder="ДЛД-401, ДЛД-501">
+								</div>
+							</div>
+							<div class="row clear">
+								<div class="col right tip">
+									Вводите названия групп через запятые, если их несколько. Название группы должно включать в себя номер курса.
+								</div>
+							</div>
+						</div-->
+
+						<div class="row clear">
+						<div class="col right" style="width:345px; padding-top: 20px; padding-right: 90px;">
+							<div style="width: 150px;" class="col">
+								<div class="btn-save float-left">
+									<a style="font-size: 16px;" href="#" class="save-lesson">Сохранить</a>
+								</div>
+							</div>
+							<div style="width: 180px;; border-left: 1px #bababa solid" class="col right">
+								<div class="btn-cancel-add btn-cancel float-right">
+									<a href="#" class="cancel-lesson">Отменить</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	 </div>
+
+
+
+	<div class="modal" id="popup-add-place">
+		<div class="modal-b">
+			<div class="headline-title-text popup-headline">Добавить аудиторию</div>
+			<div class="row clear" style="margin-top: 21px;">
+				<div class="col" style="width: 197px;">
+					<label style="padding-top: 9px;">№ аудитории<span class="red">*</span></label>
+				</div>
+				<div class="col right" style="width: 280px;">
+					<input type="text" class="form-input form-text input-medium" placeholder="17" id="number-place">
+				</div>
+			</div>
+			<div class="row clear" style="margin-top: 9px;">
+				<div class="col" style="width: 197px;">
+					<label style="padding-top: 9px;">Улица</label>
+				</div>
+				<div class="col right" style="width: 280px;">
+					<input type="text" class="form-input form-text input-popup" placeholder="ул. Ленина" id="street-place">
+				</div>
+			</div>
+			<div class="row clear" style="margin-top: 9px;">
+				<div class="col" style="width: 197px;">
+					<label style="padding-top: 9px;">Дом</label>
+				</div>
+				<div class="col right" style="width: 280px;">
+					<input type="text" class="form-input form-text input-xsmall" placeholder="4" id="house-place">
+					корп.
+					<input type="text" class="form-input form-text input-xsmall" placeholder="2" id="corpus-place">
+					стр.
+					<input type="text" class="form-input form-text input-xsmall" placeholder="2А" id="build-place">
+				</div>
+			</div>
+			<div class="row clear" style="margin-top: 9px;">
+				<div class="col" style="width: 197px;">
+					<label style="padding-top: 9px;">Название строения</label>
+				</div>
+				<div class="col right" style="width: 280px;">
+					<input type="text" class="form-input form-text input-popup" placeholder="Дом на Ленинке" id="name-place">
+				</div>
+			</div>
+			<div class="row info">
+				<span class="red">*</span> &mdash; обязательное поле
+			</div>
+			<div class="clearfix"></div>
+
+			<div class="buttons-row">
+				<div class="button-left">
+					<div class="btn-cancel-add btn-cancel">
+						<a href="#">Отменить</a>
+					</div>
+				</div>
+				<div class="btn-save float-left">
+					<a style="font-size: 14px;" id="addPlace" href="#">Сохранить</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="popup-confirm-email">
+	    <div class="modal-b">
+		<div class="headline-title-text popup-headline" style="margin-bottom: 15px;">Укажите email для обратной связи</div>
+
+		<form action="" method="post">
+		    <table class="table-padding" style="margin-left: 70px;">
+			<tr>
+			    <td>
+				email
+			    </td>
+			    <td>
+				<input type="text" class="form-input form-text input-normal" id="email" name="email" placeholder="user@raspisaniye-vuzov.ru">
+				<div class="tip" style="width: auto; margin-right: 0px">
+				    Убедитесь, что email корректный
+				</div>
+			    </td>
+			</tr>
+			<tr>
+			    <td colspan="2">
+				<div class="recaptcha-cont">
+				    <div class="g-recaptcha" data-sitekey="6LcBXP8SAAAAAMnNtLYSGEVA0yHN_exfL6QbenMJ"></div>
+				</div>
+			    </td>
+			</tr>
+			<tr>
+			    <td colspan="2">
+				<div class="tip sendform-error" id="sendform-error"></div>
+			    </td>
+			</tr>
+		    </table>
+
+		    <div class="btn-save text-center" style="margin: 0 auto;">
+			<a href="#" class="email-submit">Отправить</a>
+		    </div>
+
+		</form>
+
+	    </div>
+	</div>
+
+	<div class="modal" id="sheduleBells">
+		<div class="modal-b">
+			<div class="headline-title-text popup-headline">Расписание звонков</div>
+			<div>
+				<div class="column-50 text-center">
+					<div class="row row-time">
+						1.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						2.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						3.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						4.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+				</div>
+				<div class="column-50 text-center">
+					<div class="row row-time">
+						5.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						6.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						7.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+					<div class="row row-time">
+						8.
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-start" name="time[]">
+						&mdash;
+						<input type="text" class="form-input form-text input-normal input-small timepicker time-end" name="time[]">
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="row comment">
+				Заполните расписание звонков, чтобы не вводить время начала и конца занятия каждый раз.
+			</div>
+			<div class="buttons-row">
+				<div class="button-left">
+					<div class="btn-cancel-add btn-cancel">
+						<a href="#">Отменить</a>
+					</div>
+				</div>
+				<div class="btn-save float-left">
+					<a style="font-size: 14px;" href="#">Сохранить</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-overlay"></div>
+
+<script type="text/template" id="item-template">
+    <td>
+	<%- date_start %> - <%- date_end %>
+    </td>
+    <td class="col-time table-time">
+	<%- time_start %> - <%- time_end %>
+    </td>
+    <td class="cell-lesson-empty">
+	<div class="location-lesson" style="margin:0;"><%- auditory_name %></div>
+    </td>
+    <td class="no-padding">
+
+	<div class="overlay-container">
+
+	    <div class="type-session-lesson">
+		<%- typeName %>
+	    </div>
+
+	    <div class="session-lesson">
+
+		<div class="name-lesson">
+		    <strong><%- subject %></strong>
+		</div>
+		<div class="teacher-lesson">
+		    <%- teacher_name %>
+		</div>
+
+	    </div>
+
+	    <div class="lesson-overlay on-hover">
+		<div class="lesson-overlay-b">
+		    <div class="popup-edit-lesson">
+			<a class="edit" href="#">Редактировать</a>
+		    </div>
+		    <a class="popup-btn remove" href="#" title="Удалить занятие"></a>
+		</div>
+	    </div>
+
+	</div>
+
+    </dt>
+</script>
+
+<script type="text/template" id="add-box-template">
+    <form id="lessonForm" action="" method="">
+	<table>
+	    <colgroup>
+		<col width="15%">
+		<col width="35%">
+		<col width="15%">
+		<col width="35%">
+	    </colgroup>
+	    <tr>
+		<td>Диапазон дат</td>
+		<td>
+		    <div>
+			<span>
+			    <span>с</span>
+			    <input type="text" name="date_start" class="form-input input-small date-start" value="<%- date_start %>">
+			</span>
+			&nbsp;
+			<span>
+			    <span>по</span>
+			    <input type="text" name="date_end" class="form-input input-small date-end" value="<%- date_end %>">
+			</span>
+		    </div>
+		    <div style="padding:10px 0 0 0;">
+			<label>
+			    <input type="checkbox" value="1" name="sixdays" <%= sixdays == '1' ? 'checked="checked"' : '' %> />
+			    Идет по субботам
+			</label>
+		    </div>
+		</td>
+		<td>Название предмета</td>
+		<td>
+		    <input type="text" name="subject" value="<%- subject %>" class="form-input" style="width:210px;" />
+		</td>
+	    </tr>
+	    <tr>
+		<td>Время</td>
+		<td>
+		    <span>
+			с <input type="text" name="time_start" value="<%- time_start %>" class="form-input input-small">
+		    </span>
+		    &nbsp;
+		    <span>
+			по <input type="text" name="time_end" value="<%- time_end %>" class="form-input input-small">
+		    </span>
+		</td>
+		<td>Тип занятия</td>
+		<td>
+		    <select name="type" style="width:230px;" data-value="<%- type %>">
+
+		    </select>
+		</td>
+	    </tr>
+	    <tr>
+		<td>Аудитория</td>
+		<td>
+		    <input type="text" value="" name="auditory_id" class="form-text input-long teacher-lesson-input tags-select" data-value="<%- auditories_json %>" style="width:230px;" />
+		</td>
+
+		<td>Преподаватель</td>
+		<td>
+		    <input type="text" value="" name="teacher_id" class="form-text input-long teacher-lesson-input tags-select" data-value="<%- teachers_json %>" style="width:230px;" />
+		</td>
+	    </tr>
+	</table>
+
+	<div class="buttons-row">
+	    <div class="button-left">
+		<div class="btn-cancel-add btn-cancel">
+		    <a href="#" class="cancel">Отменить</a>
+		</div>
+	    </div>
+	    <div class="btn-save float-left">
+		<a href="#" class="save">Сохранить</a>
+	    </div>
+	</div>
+    </form>
+</script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21116644 = new Ya.Metrika({id:21116644,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21116644" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+</body>
+</html>
+
+
+
