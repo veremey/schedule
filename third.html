@@ -35,7 +35,7 @@
 					 document.getElementById(result_id).innerHTML = "<p>Возникла ошибка при отправке формы</p>";
 					 }
 					 });
-					 
+
 					 $(':input','#form_1')
 					 .not(':button, :submit, :reset, :hidden')
 					 .val('')
@@ -54,10 +54,10 @@
 				} else {
 				text.setAttribute("style", "border: 1px solid red");
                document.getElementById(result_id).innerHTML = "<p>Поле Сообщение не заполнено</p>";
-				
+
 				};
-				
-				
+
+
             } else {
                contact.setAttribute("style", "border: 1px solid red");
                document.getElementById(result_id).innerHTML = "<p>Поле Email заполнено не верно</p>";
@@ -69,12 +69,12 @@
        } else {
 	   name.setAttribute("style", "border: 1px solid red");
             document.getElementById(result_id).innerHTML = "<p>Заполнены не все поля</p>";
-	   
+
 	   };
 
 
  };
- 
+
 </script>
 </head>
 <body>
@@ -129,7 +129,7 @@
 			<div class="form__wrap">
 				<form action="" id="form_1">
 				<div id="messegeResult1">
-        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+        <p>Оставьте 11111111111Ваши контакты и наш консультант свяжется с Вами</p>
     </div>
 					<div class="input__wrap">
 						<p>Как к Вам обращаться</p>
@@ -144,11 +144,11 @@
 					<div class="clear"></div>
 					<a href="#" onclick="AjaxFormRequest('messegeResult1', 'form_1', '../mail/third1.php','name1','contact1','text1')"  class="btn__send"><i></i>отправить</a>
 				</form>
-				
-				
+
+
 				<form action="" id="form_2">
 								<div id="messegeResult2">
-        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+        <p>Оставьте 222222222Ваши контакты и наш консультант свяжется с Вами</p>
     </div>
 					<div class="input__wrap">
 						<p>Как к Вам обращаться</p>
@@ -163,11 +163,11 @@
 					<div class="clear"></div>
 					<a href="#" onclick="AjaxFormRequest('messegeResult2', 'form_2', '../mail/third2.php','name2','contact2','text2')" class="btn__send"><i></i>отправить</a>
 				</form>
-				
-				
+
+
 				<form action="" id="form_3">
 				<div id="messegeResult3">
-        <p>Оставьте Ваши контакты и наш консультант свяжется с Вами</p>
+        <p>Оставьте 333333333Ваши контакты и наш консультант свяжется с Вами</p>
     </div>
 					<div class="input__wrap">
 						<p>Как к Вам обращаться</p>
@@ -182,7 +182,7 @@
 					<div class="clear"></div>
 					<a href="#" onclick="AjaxFormRequest('messegeResult3', 'form_3', '../mail/third3.php','name3','contact3','text3')" class="btn__send"><i></i>отправить</a>
 				</form>
-				
+
 			</div>
 		</div>
 	</div>

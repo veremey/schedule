@@ -11,18 +11,21 @@ $(document).ready(function() {
 		$(this).addClass('is_active');
 		$('#form_1').siblings().removeClass('is_active');
 		$('#form_1').addClass('is_active');
+		return false;
 	});
 	$('.form_2').on('click', function() {
 		$(this).siblings().removeClass('is_active');
 		$(this).addClass('is_active');
 		$('#form_2').siblings(":not(a)").removeClass('is_active');
 		$('#form_2').addClass('is_active');
+		return false;
 	});
 	$('.form_3').on('click', function() {
 		$(this).siblings().removeClass('is_active');
 		$(this).addClass('is_active');
 		$('#form_3').siblings(":not(a)").removeClass('is_active');
 		$('#form_3').addClass('is_active');
+		return false;
 	});
 
 	if($('.form_1').hasClass('is_active')){
