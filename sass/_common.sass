@@ -72,6 +72,16 @@ $colors: rgba(0, 0, 0, .6)
 	display: none !important
 	+r(767)
 		display: inline-block !important
+.logo
+	float: left
+	width: 50px
+	height: 40px
+	margin-left: -80px
+	margin-top: 10px
+	+r(767)
+		float: right
+	img
+		max-width: 100%
 .header
 	position: fixed
 	// position: relative
@@ -422,6 +432,7 @@ form
 	padding: 1px 20px 0 0px
 	background-color: #6AC3A8
 	text-transform: uppercase
+	vertical-align: top
 	// +pr
 	+osr
 	i
@@ -441,3 +452,58 @@ form
 .get__margin_auto
 	margin: 0 auto
 	text-align: center
+
+
+.fileform
+	// background-color: #6AC3A8
+	border-radius: 2px
+	cursor: pointer
+	height: 42px
+	margin-top: 20px
+	position: relative
+	text-align: left
+	float: left
+	overflow: hidden
+	margin-right: 15px
+	vertical-align: middle
+	width: 50px
+	// background-image: url("../img/icons/add.png")
+
+.fileform .selectbutton
+	position: relative
+	background-color: #6AC3A8
+	border-radius: 3px
+	color: #3f3f3f
+	float: right
+	height: 42px
+	text-align: center
+	vertical-align: middle
+	width: 50px
+	cursor: pointer
+	i
+		display: inline-block
+		width: 30px
+		height: 30px
+		margin-top: 5px
+	img
+		max-width: 100%
+		vertical-align: top
+	.chused
+		margin-top: 10px
+	&:after
+		content: ""
+		+vcenter
+		background-image: url("../img/icons/check.png")
+		width: 57px
+		height: 57px
+#upload
+	position: absolute
+	top: 0px
+	left: 0
+	width: 50px
+	-moz-opacity: 0
+	filter: alpha(opacity=0)
+	opacity: 0
+	height: 42px
+	z-index: 20
+	cursor: pointer

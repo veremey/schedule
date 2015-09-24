@@ -264,6 +264,18 @@ a {
     .hiden-767 {
       display: inline-block !important; } }
 
+.logo {
+  float: left;
+  width: 50px;
+  height: 40px;
+  margin-left: -80px;
+  margin-top: 10px; }
+  @media only screen and (max-width: 767px) {
+    .logo {
+      float: right; } }
+  .logo img {
+    max-width: 100%; }
+
 .header {
   position: fixed;
   width: 100%;
@@ -702,6 +714,7 @@ form {
   padding: 1px 20px 0 0px;
   background-color: #6AC3A8;
   text-transform: uppercase;
+  vertical-align: top;
   font-family: "GothamProRegular", Arial, sans-serif;
   font-weight: normal; }
   .btn__send i {
@@ -719,6 +732,65 @@ form {
 .get__margin_auto {
   margin: 0 auto;
   text-align: center; }
+
+.fileform {
+  border-radius: 2px;
+  cursor: pointer;
+  height: 42px;
+  margin-top: 20px;
+  position: relative;
+  text-align: left;
+  float: left;
+  overflow: hidden;
+  margin-right: 15px;
+  vertical-align: middle;
+  width: 50px; }
+
+.fileform .selectbutton {
+  position: relative;
+  background-color: #6AC3A8;
+  border-radius: 3px;
+  color: #3f3f3f;
+  float: right;
+  height: 42px;
+  text-align: center;
+  vertical-align: middle;
+  width: 50px;
+  cursor: pointer; }
+  .fileform .selectbutton i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-top: 5px; }
+  .fileform .selectbutton img {
+    max-width: 100%;
+    vertical-align: top; }
+  .fileform .selectbutton .chused {
+    margin-top: 10px; }
+  .fileform .selectbutton:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    background-image: url("../img/icons/check.png");
+    width: 57px;
+    height: 57px; }
+
+#upload {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  width: 50px;
+  -moz-opacity: 0;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  height: 42px;
+  z-index: 20;
+  cursor: pointer; }
 
 .l {
   *zoom: 1; }

@@ -82,6 +82,9 @@
 <div class="out">
 	<div class="header">
 		<div class="l_container">
+			<a href="#" class="logo">
+				<img src="img/logo1.png" alt="">
+			</a>
 			<button class="btn__hiden-767"></button>
 			<ul class="header__menu">
 				<li><a href="webform/step1.html">Добавить расписание</a></li>
@@ -142,6 +145,7 @@
 						<textarea id="text1"  name="text1"value="" ></textarea>
 					</div>
 					<div class="clear"></div>
+
 					<a href="#" onclick="AjaxFormRequest('messegeResult1', 'form_1', '../mail/third1.php','name1','contact1','text1')"  class="btn__send"><i></i>отправить</a>
 				</form>
 
@@ -180,6 +184,19 @@
 						<textarea name="text3" id="text3" value=""></textarea>
 					</div>
 					<div class="clear"></div>
+
+					<div class="fileform">
+						<div class="selectbutton">
+							<i class='chuse js_chuse'>
+								<img src="style/img/icons/add.png" alt="">
+							</i>
+							<i class='chused'>
+								<img src="style/img/icons/check.png" alt="">
+							</i>
+						</div>
+						<input id="upload" class="multifile" type="file" name="files[]">
+						<div id="fileformlabel"></div>
+					</div>
 					<a href="#" onclick="AjaxFormRequest('messegeResult3', 'form_3', '../mail/third3.php','name3','contact3','text3')" class="btn__send"><i></i>отправить</a>
 				</form>
 

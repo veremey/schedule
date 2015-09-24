@@ -28,6 +28,10 @@ $(document).ready(function() {
 		return false;
 	});
 
+	$('#upload').on('click', function() {
+		$('.js_chuse').hide(500);
+		});
+
 	if($('.form_1').hasClass('is_active')){
 		$('#form_1').addClass('is_active');
 	};
