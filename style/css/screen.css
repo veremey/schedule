@@ -385,11 +385,13 @@ a {
       .socio a {
         width: 30px;
         height: 30px;
+        line-height: 0;
+        margin-top: 30px;
         margin-left: 10px; } }
+    .socio a:hover {
+      opacity: 0.7; }
   .socio i {
     display: block; }
-    .socio i:hover {
-      opacity: 0.7; }
     @media only screen and (max-width: 767px) {
       .socio i {
         display: inline-block;
