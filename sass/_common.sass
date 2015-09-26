@@ -116,6 +116,7 @@ $colors: rgba(0, 0, 0, .6)
 				text-align: center
 				margin-left: 0
 				opacity: 0
+				height: 80px
 				+tr(.2s)
 			&:first-child
 				margin-left: 0
@@ -134,10 +135,13 @@ $colors: rgba(0, 0, 0, .6)
 			line-height: 80px
 			color: #8FC9AE
 			font-size: 16px
+			display: block
 			+osr
 			+tr(.4s)
 			&:hover
 				color: #fff
+			+r(767)
+				display: block
 
 .socio
 	float: right
@@ -157,9 +161,11 @@ $colors: rgba(0, 0, 0, .6)
 		&:first-child
 			margin-left: 0
 		+r(767)
-			width: 30px
-			height: 30px
-			line-height: 0
+			position: relative
+			z-index: 100
+			width: 35px
+			height: 40px
+			line-height: 3
 			margin-top: 30px
 			margin-left: 10px
 		&:hover
